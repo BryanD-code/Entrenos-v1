@@ -1,55 +1,102 @@
-// src/features/auth/screens/LoginScreen.jsx
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { useLogin } from '../hooks/useLogin';
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useLogin } from '../hooks/useLogin';
+
+
+// IMPORTANTE: Rutas corregidas (3 niveles hacia atrás)
+import { AuthInput } from '../../../components/AuthInput';
+import { PrimaryButton } from '../../../components/PrimaryButton';
+
+
 
 const LoginScreen = () => {
-  const { email, setEmail, password, setPassword, loading, handleLogin } = useLogin();
+  const { email, setEmail, password, setPassword, loading, handleLogin, handleRegister } = useLogin();
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.innerContainer}>
+        <Text style={styles.title}>Bienvenido</Text>
+        <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+        
+        {/* Usando tu componente reutilizable */}
+        <AuthInput
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+        {/* Usando tu componente reutilizable */}
+        <AuthInput
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* Usando tu componente reutilizable */}
+        <PrimaryButton 
+          title="Iniciar Sesión" 
+          onPress={handleLogin}
+          loading={loading}
+          style={{ marginTop: 10 }}
+        />
+
+      <PrimaryButton
+          title="Regístrate"
+          onPress={handleRegister}
+          style={{ marginTop: 10 }}
       />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Iniciar Sesión</Text>}
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.push('/register')}>
-        <Text style={styles.linkText}>¿No tienes cuenta? Regístrate aquí</Text>
-      </TouchableOpacity>
-    </View>
+         
+          
+        
+       
+     
+       
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 40, textAlign: 'center', color: '#6200ee' },
-  input: { height: 55, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, paddingHorizontal: 15, marginBottom: 15, backgroundColor: '#f9f9f9' },
-  button: { height: 55, backgroundColor: '#6200ee', borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-  buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  linkText: { marginTop: 20, textAlign: 'center', color: '#6200ee', fontWeight: '600' }
+  container: { 
+    flex: 1, 
+    backgroundColor: '#fff' 
+  },
+  innerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 25,
+  },
+  title: { 
+    fontSize: 32, 
+    fontWeight: 'bold', 
+    marginBottom: 10, 
+    textAlign: 'center', 
+    color: '#6200ee' 
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  linkContainer: {
+    marginTop: 25,
+    alignItems: 'center',
+  },
+  linkText: { 
+    color: '#666', 
+    fontSize: 15
+  },
+  linkBold: {
+    color: '#6200ee',
+    fontWeight: 'bold'
+  }
 });
 
 export default LoginScreen;
