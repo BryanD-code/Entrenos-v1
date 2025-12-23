@@ -1,18 +1,25 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Modal } from 'react-native';
 import { useLogin } from '../hooks/useLogin';
+//modal de registro
+import ModalRegistro from '../components/ModalRegistro';
+
+
+
 
 
 // IMPORTANTE: Rutas corregidas (3 niveles hacia atrás)
 import { AuthInput } from '../../../components/AuthInput';
 import { PrimaryButton } from '../../../components/PrimaryButton';
 
-
-
 const LoginScreen = () => {
   const { email, setEmail, password, setPassword, loading, handleLogin, handleRegister } = useLogin();
-  const router = useRouter();
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  }
+
 
   return (
     <KeyboardAvoidingView 
@@ -43,17 +50,25 @@ const LoginScreen = () => {
           title="Iniciar Sesión" 
           onPress={handleLogin}
           loading={loading}
-          style={{ marginTop: 10 }}
+           style={{ marginTop: 10 }}
         />
 
-      <PrimaryButton
+     {/* ESTE BOTÓN ABRE LA MODAL */}
+        <PrimaryButton
           title="Regístrate"
-          onPress={handleRegister}
+          onPress={() => setModalVisible(true)} 
           style={{ marginTop: 10 }}
-      />
-         
-          
-        
+        />
+      
+      {/* COMPONENTE MODAL */}
+        {/* Le pasamos el estado (true/false) y la función para cerrarse */}
+        <ModalRegistro 
+            visible={modalVisible} 
+            onClose={() => setModalVisible(false)} 
+        />
+    
+
+       
        
      
        

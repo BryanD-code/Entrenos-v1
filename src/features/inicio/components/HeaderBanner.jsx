@@ -10,7 +10,7 @@ export const HeaderBanner = ({ title, role }) => (
     <Text style={styles.title}>
       {title} 
       <Text style={role === 'entrenador' ? styles.textEntrenador : styles.textAtleta}>
-        {role === 'entrenador' ? ' (Entrenador)' : ' (Atleta)'}
+       ({role}) 
       </Text>
     </Text>
   </View>
