@@ -1,6 +1,7 @@
 // app/index.jsx
 import { Redirect } from "expo-router";
 import { useAuthGlobal } from "../src/context/AuthContext";
+import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
   return (
