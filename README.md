@@ -84,3 +84,5 @@ Si deseas contribuir a este proyecto, por favor:
 
 ---
 Desarrollado para deportistas y preparadores físicos.
+--
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bryanddev/)
