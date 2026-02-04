@@ -1,50 +1,86 @@
-# Welcome to your Expo app 👋
+# Entrenos-v1 🚀
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+¡Bienvenido a **Entrenos-v1**! Una aplicación móvil moderna diseñada para la gestión y seguimiento de entrenamientos, optimizada para atletas y entrenadores.
 
-## Get started
+## 📋 Descripción
 
-1. Install dependencies
+Entrenos-v1 es una plataforma integral que conecta a entrenadores con atletas para facilitar la planificación, ejecución y análisis de rutinas de ejercicio. Construida con tecnologías de vanguardia, ofrece una experiencia fluida, segura y altamente personalizada.
 
-   ```bash
-   npm install
-   ```
+## ✨ Características Principales
 
-2. Start the app
+-   **Autenticación Segura:** Registro e inicio de sesión integrados con Firebase.
+-   **Roles de Usuario:** Diferenciación clara entre perfiles de **Atleta** y **Entrenador**.
+-   **Dashboard Personalizado:** Inicio dinámico que muestra información relevante según el rol del usuario.
+-   **Navegación Intuitiva:** Implementación de Expo Router para una navegación basada en archivos eficiente.
+-   **Diseño Premium:** Componentes estilizados y responsivos para una mejor experiencia de usuario.
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Tecnologías Utilizadas
 
-In the output, you'll find options to open the app in a
+-   **[React Native](https://reactnative.dev/):** Framework para el desarrollo de aplicaciones móviles nativas.
+-   **[Expo](https://expo.dev/):** Plataforma y ecosistema para facilitar el desarrollo con React Native.
+-   **[Firebase](https://firebase.google.com/):** Backend-as-a-Service para autenticación y base de datos en tiempo real.
+-   **[Expo Router](https://docs.expo.dev/router/introduction/):** Navegación moderna basada en el sistema de archivos.
+-   **[Context API](https://react.dev/learn/passing-data-deeply-with-context):** Gestión del estado global, especialmente para la autenticación.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📂 Estructura del Proyecto
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+Entrenos-v1/
+├── app/               # Rutas y navegación (Expo Router)
+├── assets/            # Imágenes, fuentes y recursos estáticos
+├── src/
+│   ├── components/    # Componentes reutilizables (Botones, Headers, etc.)
+│   ├── config/        # Configuraciones (Firebase, constantes)
+│   ├── context/       # Estados globales (AuthContext)
+│   ├── features/      # Módulos principales (Auth, Atleta, Entrenador, Inicio)
+│   ├── hooks/         # Hooks personalizados
+│   ├── theme/         # Sistema de diseño y estilos globales
+│   └── utils/         # Funciones de utilidad
+├── app.json           # Configuración de Expo
+└── package.json       # Dependencias y scripts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🚀 Instalación y Configuración
 
-## Learn more
+Sigue estos pasos para ejecutar el proyecto localmente:
 
-To learn more about developing your project with Expo, look at the following resources:
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone https://github.com/tu-usuario/entrenos-v1.git
+    cd entrenos-v1
+    ```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-## Join the community
+3.  **Configurar variables de entorno:**
+    Crea un archivo `.env` en la raíz del proyecto y añade tus credenciales de Firebase:
+    ```env
+    EXPO_PUBLIC_FIREBASE_API_KEY=tu_api_key
+    EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_auth_domain
+    # ... otras variables necesarias
+    ```
 
-Join our community of developers creating universal apps.
+4.  **Iniciar la aplicación:**
+    ```bash
+    npx expo start
+    ```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+5.  **Abrir en dispositivo/emulador:**
+    -   Presiona `a` para Android.
+    -   Presiona `i` para iOS.
+    -   Escanea el código QR con la app **Expo Go**.
+
+## 🤝 Contribución
+
+Si deseas contribuir a este proyecto, por favor:
+1. Haz un Fork del proyecto.
+2. Crea una rama para tu característica (`git checkout -b feature/NuevaFuncionalidad`).
+3. Haz commit de tus cambios (`git commit -m 'Añade NuevaFuncionalidad'`).
+4. Haz Push a la rama (`git push origin feature/NuevaFuncionalidad`).
+5. Abre un Pull Request.
+
+---
+Desarrollado para deportistas y preparadores físicos.
