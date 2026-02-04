@@ -1,10 +1,10 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore'; 
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
 // Ajusta esta ruta a donde tengas tu archivo de configuración real
-import { firebaseConfig } from '../../firebase-config'; 
+import { firebaseConfig } from '../config/firebase';
 
 // 1. Inicializamos Firebase una sola vez para este contexto
 const app = initializeApp(firebaseConfig);
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
           if (userDocSnap.exists()) {
             console.log("Datos encontrados en Firestore:", userDocSnap.data());
-            
+
             // C. ¡Aquí ocurre la magia! Fusionamos Auth + BBDD
             setUser({
               uid: currentUser.uid,
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         console.log("Sesión cerrada");
         setUser(null);
       }
-      
+
       setLoading(false);
     });
 

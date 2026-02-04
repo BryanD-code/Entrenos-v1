@@ -4,26 +4,37 @@ import { Redirect } from "expo-router";
 import { useAuthGlobal } from "../../src/context/AuthContext";
 import AtletasScreen from "../../src/features/atleta/screens/AtletaScreen";
 import EntrenadorScreen from "../../src/features/entrenador/screens/EntrenadorScreen";
+import { View, Text, TouchableOpacity } from "react-native";
 
 
 export default function Index() {
-   const { user } = useAuthGlobal();
-   console.log("Rol del usuario en Index.tsx:", user?.role);
-  if (user?.role?.toLowerCase() === "atleta") { 
+  const { user, logout } = useAuthGlobal();
+  console.log("Rol del usuario en Index.tsx:", user?.role);
+  if (user?.role?.toLowerCase() === "atleta") {
     return (
-      <AtletasScreen /> 
+      <AtletasScreen />
     );
   } else if (user?.role?.toLowerCase() === "entrenador") {
-  return (
-    <EntrenadorScreen />
-  );
+    return (
+      <EntrenadorScreen />
+    );
   }
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Rol no detectado o cuenta incompleta.</Text>
+      <Text>Por favor, contacta al administrador.</Text>
+      <TouchableOpacity onPress={() => logout()} style={{ marginTop: 20 }}>
+        <Text style={{ color: 'blue' }}>Cerrar Sesión</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
-  // app/index.jsx
+// app/index.jsx
 
 
 
 
-  
+
 

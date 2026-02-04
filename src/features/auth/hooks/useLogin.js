@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
 import { initializeApp } from "firebase/app";
 // 1. IMPORTANTE: Agregamos las funciones de Firestore (Base de Datos)
-import { getFirestore, doc, setDoc } from 'firebase/firestore'; 
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 
-import { firebaseConfig } from '../../../../firebase-config';
+import { firebaseConfig } from '../../../config/firebase';
 
 export const useLogin = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ export const useLogin = () => {
 
   // 3. MODIFICADO: handleRegister ahora recibe los parámetros extra
   const handleRegister = async (role, username) => {
-    
+
     // Validaciones básicas
     if (!email || !password || !role || !username) {
       alert("Por favor completa todos los campos (email, contraseña, usuario y rol).");
@@ -48,13 +48,13 @@ export const useLogin = () => {
       });
 
       alert(`¡Registro exitoso! Bienvenido ${username}`);
-      
+
       // C. Navegar automáticamente a la app principal
       router.replace('/(tabs)');
 
     } catch (error) {
       console.log(error);
-      
+
       // Manejo de errores específicos
       if (error.code === 'auth/email-already-in-use') {
         alert("El correo ya está en uso.");
@@ -77,16 +77,16 @@ export const useLogin = () => {
       return;
     }
 
-    
+
 
     try {
-      
+
       setLoading(true);
 
       // 2. Intentar loguear con Firebase
       await signInWithEmailAndPassword(auth, email, password);
       console.log("Login exitoso");
-      
+
     } catch (error) {
       console.log(error.code);
       // 4. Manejo de errores amigable

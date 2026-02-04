@@ -1,2 +1,0 @@
-Aqui va los servicios como la conexion a firebase por ejemplo 
-o los fetch 

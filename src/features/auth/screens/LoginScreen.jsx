@@ -9,7 +9,7 @@ import ModalRegistro from '../components/ModalRegistro';
 
 
 // IMPORTANTE: Rutas corregidas (3 niveles hacia atrás)
-import { AuthInput } from '../../../components/AuthInput';
+import { AuthInput } from '../components/AuthInput';
 import { PrimaryButton } from '../../../components/PrimaryButton';
 
 const LoginScreen = () => {
@@ -22,14 +22,14 @@ const LoginScreen = () => {
 
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <View style={styles.innerContainer}>
         <Text style={styles.title}>Bienvenido</Text>
         <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
-        
+
         {/* Usando tu componente reutilizable */}
         <AuthInput
           placeholder="Correo electrónico"
@@ -46,53 +46,53 @@ const LoginScreen = () => {
         />
 
         {/* Usando tu componente reutilizable */}
-        <PrimaryButton 
-          title="Iniciar Sesión" 
+        <PrimaryButton
+          title="Iniciar Sesión"
           onPress={handleLogin}
           loading={loading}
-           style={{ marginTop: 10 }}
-        />
-
-     {/* ESTE BOTÓN ABRE LA MODAL */}
-        <PrimaryButton
-          title="Regístrate"
-          onPress={() => setModalVisible(true)} 
           style={{ marginTop: 10 }}
         />
-      
-      {/* COMPONENTE MODAL */}
-        {/* Le pasamos el estado (true/false) y la función para cerrarse */}
-        <ModalRegistro 
-            visible={modalVisible} 
-            onClose={() => setModalVisible(false)} 
-        />
-    
 
-       
-       
-     
-       
+        {/* ESTE BOTÓN ABRE LA MODAL */}
+        <PrimaryButton
+          title="Regístrate"
+          onPress={() => setModalVisible(true)}
+          style={{ marginTop: 10 }}
+        />
+
+        {/* COMPONENTE MODAL */}
+        {/* Le pasamos el estado (true/false) y la función para cerrarse */}
+        <ModalRegistro
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
+
+
+
+
+
+
       </View>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#fff' 
+  container: {
+    flex: 1,
+    backgroundColor: '#fff'
   },
   innerContainer: {
     flex: 1,
     justifyContent: 'center',
     padding: 25,
   },
-  title: { 
-    fontSize: 32, 
-    fontWeight: 'bold', 
-    marginBottom: 10, 
-    textAlign: 'center', 
-    color: '#6200ee' 
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#6200ee'
   },
   subtitle: {
     fontSize: 16,
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     marginTop: 25,
     alignItems: 'center',
   },
-  linkText: { 
-    color: '#666', 
+  linkText: {
+    color: '#666',
     fontSize: 15
   },
   linkBold: {

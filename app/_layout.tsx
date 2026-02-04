@@ -13,17 +13,20 @@ function InitialLayout() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inTabsGroup = segments[0] === '(tabs)';
 
-    if (user && inAuthGroup) {
-      router.replace('/(tabs)');
-    } else if (!user && !inAuthGroup) {
+    if (user) {
+      if (inAuthGroup || !inTabsGroup) {
+        router.replace('/(tabs)');
+      }
+    } else if (!inAuthGroup) {
       router.replace('/(auth)/login');
     }
   }, [user, loading, segments]);
 
   // Mientras carga el estado de Auth, no renderizamos nada (o un spinner)
   // Esto evita errores de renderizado antes de saber si hay usuario
-  if (loading) return null; 
+  if (loading) return null;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

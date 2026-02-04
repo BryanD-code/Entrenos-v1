@@ -1,14 +1,14 @@
 import React, { useState } from 'react'; // 1. Importamos useState
 import { Modal, StyleSheet, Text, Pressable, View, Alert } from 'react-native';
-import { AuthInput } from '../../../components/AuthInput';
+import { AuthInput } from './AuthInput';
 import { useLogin } from '../hooks/useLogin';
 
 const ModalRegistro = ({ visible, onClose }) => {
   const { email, setEmail, password, setPassword, loading, handleRegister } = useLogin();
-  
-    // 2. Nuevo estado para saber cuál está seleccionado
-    const [selectedRole, setSelectedRole] = useState(null); 
-    const [username, setUsername] = useState('');
+
+  // 2. Nuevo estado para saber cuál está seleccionado
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [username, setUsername] = useState('');
 
   // Función auxiliar para enviar el registro final
   const onFinalRegister = () => {
@@ -34,38 +34,38 @@ const ModalRegistro = ({ visible, onClose }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Completa el registro</Text>
-          
+
           <View style={styles.inputContainer}>
-             <AuthInput
-                placeholder="Nombre de usuario"
-                value={username}
-                onChangeText={setUsername}
-              />
-              <AuthInput
-                placeholder="Correo electrónico"
-                value={email}
-                onChangeText={setEmail}
-              />
-              <AuthInput
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+            <AuthInput
+              placeholder="Nombre de usuario"
+              value={username}
+              onChangeText={setUsername}
+            />
+            <AuthInput
+              placeholder="Correo electrónico"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <AuthInput
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
           </View>
 
           <Text style={styles.labelRol}>Selecciona tu rol para registrarte:</Text>
-          
+
           <View style={styles.botonesRow}>
-            
+
             {/* --- Botón Entrenador --- */}
             <Pressable
               // LOGICA DE ESTILO CONDICIONAL:
               style={[
-                styles.button, 
+                styles.button,
                 styles.btnMitad,
                 // 1. Si este es el seleccionado -> AZUL (#2196F3)
-                selectedRole === 'entrenador' 
+                selectedRole === 'entrenador'
                   ? { backgroundColor: '#2196F3', opacity: 1 }
                   // 2. Si el OTRO está seleccionado -> OPACO (gris o transparente)
                   : selectedRole === 'atleta'
@@ -74,40 +74,40 @@ const ModalRegistro = ({ visible, onClose }) => {
                     : styles.bgEntrenador
               ]}
               // Al presionar, solo guardamos el estado, no registramos aún
-              onPress={() => setSelectedRole('entrenador')} 
-            > 
+              onPress={() => setSelectedRole('entrenador')}
+            >
               <Text style={styles.textStyle}>Entrenador</Text>
-            </Pressable> 
+            </Pressable>
 
             {/* --- Botón Atleta --- */}
             <Pressable
               style={[
-                styles.button, 
+                styles.button,
                 styles.btnMitad,
                 // Misma lógica invertida
-                selectedRole === 'atleta' 
+                selectedRole === 'atleta'
                   ? { backgroundColor: '#2196F3', opacity: 1 }
                   : selectedRole === 'entrenador'
                     ? { backgroundColor: '#03dac6', opacity: 0.3 }
                     : styles.bgAtleta
               ]}
               onPress={() => setSelectedRole('atleta')}
-            > 
+            >
               <Text style={styles.textStyle}>Atleta</Text>
             </Pressable>
           </View>
-        
+
           {/* --- BOTÓN ACEPTAR --- */}
           {/* Ahora este botón ejecuta el registro real con el rol seleccionado */}
           <Pressable
             style={[styles.button, styles.bgRegistrar, styles.btnFull]}
-            onPress={onFinalRegister}> 
+            onPress={onFinalRegister}>
             <Text style={styles.textStyle}>Aceptar</Text>
           </Pressable>
 
           <Pressable
             style={[styles.button, styles.bgCancelar, styles.btnFull]}
-            onPress={onClose}> 
+            onPress={onClose}>
             <Text style={styles.textStyle}>Cancelar</Text>
           </Pressable>
 
@@ -123,11 +123,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)', 
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalView: {
-    width: '90%', 
-    maxWidth: 400, 
+    width: '90%',
+    maxWidth: 400,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 25,
@@ -156,9 +156,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   botonesRow: {
-    flexDirection: 'row',        
-    justifyContent: 'space-between', 
-    width: '100%',              
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
     marginBottom: 15,
   },
   button: {
@@ -169,23 +169,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnMitad: {
-    width: '48%', 
+    width: '48%',
   },
   btnFull: {
     width: '100%',
-    marginTop: 10, 
+    marginTop: 10,
   },
   bgEntrenador: {
-    backgroundColor: '#6200ee', 
+    backgroundColor: '#6200ee',
   },
   bgAtleta: {
-    backgroundColor: '#03dac6', 
+    backgroundColor: '#03dac6',
   },
   bgRegistrar: {
-    backgroundColor: '#2196F3', 
+    backgroundColor: '#2196F3',
   },
   bgCancelar: {
-    backgroundColor: '#ff5252', 
+    backgroundColor: '#ff5252',
   },
   textStyle: {
     color: 'white',
