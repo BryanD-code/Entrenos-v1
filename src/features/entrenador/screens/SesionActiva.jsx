@@ -3,6 +3,7 @@ import { Modal, View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput,
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getTrainerPlanes, updateTrainingPlan, deleteTrainingPlan } from '../services/trainerService';
 import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
+import Toast from 'react-native-toast-message';
 
 const SesionActiva = ({ visible, onClose, atleta }) => {
     const [planes, setPlanes] = useState([]);
@@ -65,13 +66,13 @@ const SesionActiva = ({ visible, onClose, atleta }) => {
                 ejercicios: editData.ejercicios
             });
 
-            showToast("Éxito", "Plan actualizado correctamente");
+            Toast.show("Éxito", "Plan actualizado correctamente");
             await loadPlanes();
             setSelectedPlan(editData);
 
         } catch (error) {
             console.error(error);
-            showToast("Error", "No se pudo actualizar el plan");
+            Toast.show("Error", "No se pudo actualizar el plan");
         } finally {
             setSaving(false);
         }
