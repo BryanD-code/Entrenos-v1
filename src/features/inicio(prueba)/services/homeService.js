@@ -1,4 +1,4 @@
-// src/features/home/services/homeService.js
+
 export const fetchWelcomeData = async () => {
   // Simulación de una llamada a la API
   return new Promise((resolve) => {

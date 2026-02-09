@@ -1,16 +1,14 @@
-// src/features/home/components/HeaderBanner.jsx
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 export const HeaderBanner = ({ title, role }) => (
   <View style={[
-    styles.banner, 
+    styles.banner,
     role === 'entrenador' ? styles.bgEntrenador : styles.bgAtleta
   ]}>
     <Text style={styles.title}>
-      {title} 
+      {title}
       <Text style={role === 'entrenador' ? styles.textEntrenador : styles.textAtleta}>
-       ({role}) 
+        ({role})
       </Text>
     </Text>
   </View>

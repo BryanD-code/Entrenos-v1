@@ -1,15 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
-// Ajusta esta ruta a donde tengas tu archivo de configuración real
-import { firebaseConfig } from '../config/firebase';
-
-// 1. Inicializamos Firebase una sola vez para este contexto
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebase';
 
 const AuthContext = createContext();
 
@@ -18,23 +10,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 2. Escuchamos cambios en la autenticación (Login/Logout)
+    //  Escuchamos cambios en la autenticación (Login/Logout)
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
 
       if (currentUser) {
-        // A. El usuario hizo login (tiene UID y Email)
+        //  El usuario hizo login (tiene UID y Email)
         console.log("Usuario autenticado. UID:", currentUser.uid);
 
         try {
-          // B. Vamos a Firestore a buscar el documento con el mismo UID
+          //  Vamos a Firestore a buscar el documento con el mismo UID
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
             console.log("Datos encontrados en Firestore:", userDocSnap.data());
 
-            // C. ¡Aquí ocurre la magia! Fusionamos Auth + BBDD
+            //  Fusionamos Auth + BBDD
             setUser({
               uid: currentUser.uid,
               email: currentUser.email,
@@ -50,7 +42,7 @@ export const AuthProvider = ({ children }) => {
           setUser(currentUser);
         }
       } else {
-        // D. Usuario cerró sesión
+        // Usuario cerró sesión
         console.log("Sesión cerrada");
         setUser(null);
       }

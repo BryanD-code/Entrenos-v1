@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { View, StyleSheet, Pressable, Text } from 'react-native';
 import { useAuthGlobal } from '../../../context/AuthContext';
 import { HeaderBanner } from '../components/HeaderBanner';
@@ -8,6 +8,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+
       <HeaderBanner
         title={user?.username || "Usuario"}
         role={user?.role || "Sin rol asignado"}
@@ -26,20 +27,20 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#fff' },
-  spacer: { height: 20 },
+  spacer: { height: 1 },
   button: {
-    height: 55,
+    height: 30,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ff5252',
-    width: '100%',
-    marginVertical: 10,
+    width: '10%',
+    marginVertical: 1,
   },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
   }
 });
 

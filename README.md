@@ -1,4 +1,4 @@
-# Entrenos-v1 🚀
+# Entrenos-v1 
 
 ¡Bienvenido a **Entrenos-v1**! Una aplicación móvil moderna diseñada para la gestión y seguimiento de entrenamientos, optimizada para atletas y entrenadores.
 
@@ -12,7 +12,7 @@ Entrenos-v1 es una plataforma integral que conecta a entrenadores con atletas pa
 -   **Roles de Usuario:** Diferenciación clara entre perfiles de **Atleta** y **Entrenador**.
 -   **Dashboard Personalizado:** Inicio dinámico que muestra información relevante según el rol del usuario.
 -   **Navegación Intuitiva:** Implementación de Expo Router para una navegación basada en archivos eficiente.
--   **Diseño Premium:** Componentes estilizados y responsivos para una mejor experiencia de usuario.
+-   
 
 ## 🛠️ Tecnologías Utilizadas
 

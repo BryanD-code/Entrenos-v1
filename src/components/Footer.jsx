@@ -3,15 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 
 /**
- * Footer básico reutilizable.
- * Ideal para mostrar branding, redes sociales o información de copyright.
+ * Footer básico reutilizable
  */
 export const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     const handleSocialPress = (platform) => {
         console.log(`Abrir ${platform}`);
-        // Ejemplo: Linking.openURL('https://instagram.com/tu_cuenta');
+        Linking.openURL('https://www.instagram.com/brrryang/');
     };
 
     return (
@@ -19,9 +18,9 @@ export const Footer = () => {
             {/* Sección del Logo / Nombre (Placeholder) */}
             <View style={styles.brandSection}>
                 <View style={styles.logoPlaceholder}>
-                    <Ionicons name="fitness" size={24} color="#6200ee" />
+                    <Ionicons name="fitness" size={24} color="#FF5722" />
                 </View>
-                <Text style={styles.brandName}>Entrenos App</Text>
+                <Text style={styles.brandName}>Entreno-v1</Text>
             </View>
 
             <Text style={styles.description}>
@@ -34,38 +33,34 @@ export const Footer = () => {
                     style={styles.socialButton}
                     onPress={() => handleSocialPress('Instagram')}
                 >
-                    <Ionicons name="logo-instagram" size={22} color="#666" />
+                    <Ionicons name="logo-instagram" size={22} color="#fff" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.socialButton}
-                    onPress={() => handleSocialPress('Twitter')}
+                    onPress={() => handleSocialPress('x')}
                 >
-                    <Ionicons name="logo-twitter" size={22} color="#666" />
+                    <Ionicons name="logo-whatsapp" size={22} color="#fff" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.socialButton}
                     onPress={() => handleSocialPress('Web')}
                 >
-                    <Ionicons name="globe-outline" size={22} color="#666" />
+                    <Ionicons name="globe-outline" size={22} color="#fff" />
                 </TouchableOpacity>
             </View>
 
             {/* Copyright */}
-            <View style={styles.copyrightSection}>
-                <Text style={styles.copyrightText}>
-                    © {currentYear} Entrenos v1. Todos los derechos reservados.
-                </Text>
-            </View>
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        padding: 30,
-        backgroundColor: '#f9f9f9',
+        padding: 1,
+        backgroundColor: '#1A1A1A',
         borderTopWidth: 1,
         borderTopColor: '#eee',
         alignItems: 'center',
@@ -76,14 +71,13 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     logoPlaceholder: {
-        width: 40,
-        height: 40,
+        width: 20,
+        height: 20,
         backgroundColor: '#fff',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
-        // Sombra suave
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
@@ -91,32 +85,32 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     brandName: {
-        fontSize: 18,
+        fontSize: 12,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#fff',
     },
     description: {
         fontSize: 14,
         color: '#777',
         textAlign: 'center',
         lineHeight: 20,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     socialRow: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     socialButton: {
-        width: 45,
-        height: 45,
+        width: 25,
+        height: 25,
         borderRadius: 22.5,
-        backgroundColor: '#fff',
+        backgroundColor: '#FF5722',
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 8,
         borderWidth: 1,
-        borderColor: '#eee',
+        borderColor: '#FF5722',
     },
     copyrightSection: {
         borderTopWidth: 1,
@@ -125,7 +119,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     copyrightText: {
-        fontSize: 12,
+        fontSize: 9,
         color: '#bbb',
         textAlign: 'center',
     },

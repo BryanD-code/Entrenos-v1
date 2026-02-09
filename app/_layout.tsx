@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Stack, useRouter, useSegments, Slot } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, useAuthGlobal } from "../src/context/AuthContext"; // Ajusta la ruta
 
-// 1. Este componente maneja la lógica de protección
+//  Este componente maneja la lógica de protección
 // (Solo puede existir PORQUE está dentro del Provider abajo)
 function InitialLayout() {
   const { user, loading } = useAuthGlobal();
@@ -37,7 +37,7 @@ function InitialLayout() {
   );
 }
 
-// 2. Este es el componente Raíz que exportas
+//  Este es el componente Raíz que se exporta
 export default function RootLayout() {
   return (
     <AuthProvider>

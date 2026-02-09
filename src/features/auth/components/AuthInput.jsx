@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 
-// Nota el "export const" (Exportación nombrada)
+//componente reutilizable para inputs en auth
 export const AuthInput = ({ value, onChangeText, placeholder, secureTextEntry }) => {
   return (
     <TextInput
@@ -9,8 +9,8 @@ export const AuthInput = ({ value, onChangeText, placeholder, secureTextEntry })
       placeholder={placeholder}
       value={value}
       onChangeText={onChangeText}
-      autoCapitalize="none" // Evita mayúsculas automáticas en correos
-      secureTextEntry={secureTextEntry} // Para ocultar contraseña
+      autoCapitalize="none"
+      secureTextEntry={secureTextEntry}
       placeholderTextColor="#999"
     />
   );
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    borderRadius: 12, // Bordes un poco más redondeados
+    borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
     backgroundColor: '#f9f9f9',

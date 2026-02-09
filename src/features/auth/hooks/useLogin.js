@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { initializeApp } from "firebase/app";
-// 1. IMPORTANTE: Agregamos las funciones de Firestore (Base de Datos)
+// Agregamos las funciones de Firestore (Base de Datos)
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
@@ -16,9 +16,9 @@ export const useLogin = () => {
   // Inicialización
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app); // 2. Inicializamos la base de datos
+  const db = getFirestore(app); //Inicializamos la base de datos
 
-  // 3. MODIFICADO: handleRegister ahora recibe los parámetros extra
+  // handleRegister ahora recibe los parámetros extra
   const handleRegister = async (role, username) => {
 
     // Validaciones básicas
@@ -30,14 +30,14 @@ export const useLogin = () => {
     setLoading(true); // Iniciamos carga
 
     try {
-      // A. Crear usuario en Firebase Authentication
+      // Crear usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      const uid = user.uid; // Obtenemos el ID único generado
+      const uid = user.uid; // Obtenemos el ID único generado por firebase
 
       console.log("Usuario creado en Auth con ID:", uid);
 
-      // B. Guardar Rol y Nombre en Firestore Database
+      // Guardar Rol y Nombre en Firestore Database
       // Creamos una carpeta en la colección "users" con el nombre del UID
       await setDoc(doc(db, "users", uid), {
         uid: uid,
@@ -49,13 +49,13 @@ export const useLogin = () => {
 
       alert(`¡Registro exitoso! Bienvenido ${username}`);
 
-      // C. Navegar automáticamente a la app principal
+      // Navegar automáticamente a la app segun el rol  
       router.replace('/(tabs)');
 
     } catch (error) {
       console.log(error);
 
-      // Manejo de errores específicos
+      // Manejo de errores específicos de registro
       if (error.code === 'auth/email-already-in-use') {
         alert("El correo ya está en uso.");
       } else if (error.code === 'auth/invalid-email') {
@@ -83,13 +83,13 @@ export const useLogin = () => {
 
       setLoading(true);
 
-      // 2. Intentar loguear con Firebase
+      // Intentar loguear con Firebase
       await signInWithEmailAndPassword(auth, email, password);
       console.log("Login exitoso");
 
     } catch (error) {
       console.log(error.code);
-      // 4. Manejo de errores amigable
+      // Manejo de errores de login
       if (error.code === 'auth/invalid-email') alert("El formato del correo no es válido.");
       else if (error.code === 'auth/user-not-found') alert("No existe una cuenta con este correo.");
       else if (error.code === 'auth/wrong-password') alert("Contraseña incorrecta.");

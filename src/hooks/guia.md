@@ -1,0 +1,24 @@
+Hooks globales posibles por implementar:
+
+- useAuth.js: Para manejar la autenticación de usuarios
+- useUser.js: Para manejar la información del usuario
+- useTraining.js: Para manejar la información de los entrenamientos
+- useExercise.js: Para manejar la información de los ejercicios
+- useWorkout.js: Para manejar la información de las rutinas
+- useProgress.js: Para manejar la información del progreso
+- useNotification.js: Para manejar la información de las notificaciones
+- useSettings.js: Para manejar la información de la configuración
+- useTheme.js: Para manejar la información del tema
+- useLanguage.js: Para manejar la información del idioma
+- useLogout.js: Para manejar el cierre de sesión
+- useRegister.js: Para manejar el registro de usuarios
+- useLogin.js: Para manejar el inicio de sesión
+- useForgotPassword.js: Para manejar el olvido de contraseña
+- useResetPassword.js: Para manejar el restablecimiento de contraseña
+- useUpdatePassword.js: Para manejar la actualización de contraseña
+- useUpdateProfile.js: Para manejar la actualización del perfil
+- useDeleteAccount.js: Para manejar la eliminación de la cuenta
+- useChangeEmail.js: Para manejar el cambio de correo electrónico
+- useChangePassword.js: Para manejar el cambio de contraseña
+- useChangeUsername.js: Para manejar el cambio de nombre de usuario
+- useChangeRole.js: Para manejar el cambio de rol

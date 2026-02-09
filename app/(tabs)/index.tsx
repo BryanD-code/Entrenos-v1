@@ -1,12 +1,9 @@
-
-import HomeScreen from "../../src/features/inicio/screens/HomeScreen";
-import { Redirect } from "expo-router";
 import { useAuthGlobal } from "../../src/context/AuthContext";
 import AtletasScreen from "../../src/features/atleta/screens/AtletaScreen";
 import EntrenadorScreen from "../../src/features/entrenador/screens/EntrenadorScreen";
 import { View, Text, TouchableOpacity } from "react-native";
 
-
+//Dependiendo del rol del usuario se muestra una pantalla u otra
 export default function Index() {
   const { user, logout } = useAuthGlobal();
   console.log("Rol del usuario en Index.tsx:", user?.role);
@@ -31,7 +28,7 @@ export default function Index() {
   );
 }
 
-// app/index.jsx
+
 
 
 

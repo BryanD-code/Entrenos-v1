@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // 1. Importamos useState
+import React, { useState } from 'react';
 import { Modal, StyleSheet, Text, Pressable, View, Alert } from 'react-native';
 import { AuthInput } from './AuthInput';
 import { useLogin } from '../hooks/useLogin';
@@ -6,7 +6,7 @@ import { useLogin } from '../hooks/useLogin';
 const ModalRegistro = ({ visible, onClose }) => {
   const { email, setEmail, password, setPassword, loading, handleRegister } = useLogin();
 
-  // 2. Nuevo estado para saber cuál está seleccionado
+  //  Nuevo estado para saber cuál está seleccionado
   const [selectedRole, setSelectedRole] = useState(null);
   const [username, setUsername] = useState('');
 
@@ -20,7 +20,7 @@ const ModalRegistro = ({ visible, onClose }) => {
       Alert.alert("Atención", "Por favor ingresa un nombre de usuario");
       return;
     }
-    // Llama a tu hook con el rol seleccionado
+    // Llama al hook con el rol seleccionado
     handleRegister(selectedRole, username);
   };
 
@@ -64,13 +64,13 @@ const ModalRegistro = ({ visible, onClose }) => {
               style={[
                 styles.button,
                 styles.btnMitad,
-                // 1. Si este es el seleccionado -> AZUL (#2196F3)
+                // Si este es el seleccionado -> AZUL (#2196F3)
                 selectedRole === 'entrenador'
                   ? { backgroundColor: '#2196F3', opacity: 1 }
-                  // 2. Si el OTRO está seleccionado -> OPACO (gris o transparente)
+                  // Si el OTRO está seleccionado -> OPACO (gris o transparente)
                   : selectedRole === 'atleta'
                     ? { backgroundColor: '#6200ee', opacity: 0.3 }
-                    // 3. Si ninguno está seleccionado -> Color Original
+                    // Si ninguno está seleccionado -> Color Original
                     : styles.bgEntrenador
               ]}
               // Al presionar, solo guardamos el estado, no registramos aún
@@ -117,7 +117,7 @@ const ModalRegistro = ({ visible, onClose }) => {
   );
 };
 
-// Tus estilos se mantienen exactamente igual
+// los estilos se mantienen exactamente igual
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,

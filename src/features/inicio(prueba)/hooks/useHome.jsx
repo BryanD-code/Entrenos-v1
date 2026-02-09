@@ -1,4 +1,3 @@
-// src/features/home/hooks/useHome.js
 import { useState, useEffect } from 'react';
 
 export const useHome = () => {
