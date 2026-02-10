@@ -14,7 +14,7 @@ export const getEjercicios = async () => {
                 where('grupo', '==', grupo),
                 orderBy('nombre'),
                 //limito a 100 ejercicios por grupo por el limite de firebase
-                limit(100)
+                limit(250)
             );
             const snapshot = await getDocs(q);
             return snapshot.docs.map(doc => ({
