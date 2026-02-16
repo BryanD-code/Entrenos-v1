@@ -122,7 +122,8 @@ const AtletaScreen = () => {
           </ScrollView>
         )}
       </View>
-      <Footer />
+      {/* <Footer/> */}
+      
     </View>
   );
 };

@@ -86,7 +86,7 @@ const EntrenadorScreen = () => {
 
   const handleOpenEditSession = () => {
     if (!selectedAtleta) {
-      showToast("⚠️ Primero debes seleccionar un atleta");
+      showToast(" Primero debes seleccionar un atleta");
       return;
     }
     setEditSessionVisible(true);
@@ -244,7 +244,7 @@ const EntrenadorScreen = () => {
         />
       </ScrollView>
       <Toast message={toastMessage} visible={toastVisible} />
-      <Footer />
+      <Footer/>
     </View>
   );
 };
