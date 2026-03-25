@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert,
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getAtletas, createTrainingPlan } from '../services/trainerService';
 import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
+import JsonImportModal from '../components/JsonImportModal';
 import { useAuthGlobal } from '../../../context/AuthContext';
 import SesionActiva from './SesionActiva';
 import { Header } from '../../../components/Header';
@@ -46,6 +47,7 @@ const EntrenadorScreen = () => {
   const [addedExercises, setAddedExercises] = useState([]);
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isJsonModalVisible, setJsonModalVisible] = useState(false);
   const [isEditSessionVisible, setEditSessionVisible] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -90,6 +92,18 @@ const EntrenadorScreen = () => {
       return;
     }
     setEditSessionVisible(true);
+  };
+
+  const handleJsonImport = (parsedData) => {
+    setSesion({
+      dia: parsedData.dia || '',
+      tituloSesion: parsedData.tituloSesion || '',
+      orden: parsedData.orden?.toString() || ''
+    });
+    if (parsedData.ejercicios && Array.isArray(parsedData.ejercicios)) {
+      setAddedExercises((prev) => [...prev, ...parsedData.ejercicios]);
+    }
+    showToast("Datos de JSON cargados correctamente. Revisa antes de guardar.");
   };
 
   const handleSaveSession = async () => {
@@ -162,7 +176,13 @@ const EntrenadorScreen = () => {
         )}
 
         {/*  Datos de la Sesión */}
-        <Text style={styles.sectionTitle}>2. Datos de la Sesión</Text>
+        <View style={styles.rowBetween}>
+          <Text style={styles.sectionTitle}>2. Datos de la Sesión</Text>
+          <TouchableOpacity onPress={() => setJsonModalVisible(true)} style={[styles.addButtonMini, { backgroundColor: '#2196F3' }]}>
+            <MaterialCommunityIcons name="code-json" size={20} color="#fff" />
+            <Text style={styles.addButtonText}>Cargar JSON</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.formCard}>
           <TextInput
             style={styles.input}
@@ -235,6 +255,12 @@ const EntrenadorScreen = () => {
           visible={isModalVisible}
           onClose={() => setModalVisible(false)}
           onSelect={handleAddExercise}
+        />
+
+        <JsonImportModal
+          visible={isJsonModalVisible}
+          onClose={() => setJsonModalVisible(false)}
+          onImport={handleJsonImport}
         />
 
         <SesionActiva
