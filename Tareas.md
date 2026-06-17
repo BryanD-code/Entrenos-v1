@@ -5,6 +5,9 @@ En este archivo iremos registrando y haciendo el seguimiento de las tareas del p
 ## Lista de Tareas
 
 - [x] Leer el `README.md` y entender el funcionamiento de la aplicación leyendo el código del proyecto.
+- [x] Crear e integrar formulario de feedback (peso usado, esfuerzo RPE 1-10, comentarios) por ejercicio en la pantalla del atleta y persistir en Firestore.
+- [x] Integrar exportación automática y manual a Google Sheets mediante webhook de Google Apps Script.
+- [x] Si el entrenamiento está completado en true, guardar los datos de la sesión como una nueva colección 'entrenamientos_completados' organizada por fecha y vaciar los campos de la sesión original en 'planes_entrenamiento' para poder reusarla como nueva sesión.
 - [ ] Definir los siguientes pasos del desarrollo.
 
 ---
