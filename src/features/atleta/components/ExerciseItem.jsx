@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ExerciseVideo } from './ExerciseVideo';
 import { ExerciseFeedbackForm } from './ExerciseFeedbackForm';
 
-export const ExerciseItem = ({ item, index, feedback, onUpdateFeedback }) => {
+export const ExerciseItem = ({ item, index, feedback, onUpdateFeedback, isEditable = true }) => {
   return (
     <View style={styles.exerciseItem}>
       <Text style={styles.exerciseName}>{index + 1}. {item.ejercicio.nombre}</Text>
@@ -27,6 +27,7 @@ export const ExerciseItem = ({ item, index, feedback, onUpdateFeedback }) => {
       <ExerciseFeedbackForm
         feedback={feedback}
         onUpdateFeedback={onUpdateFeedback}
+        isEditable={isEditable}
       />
     </View>
   );

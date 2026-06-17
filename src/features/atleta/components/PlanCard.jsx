@@ -12,6 +12,8 @@ export const PlanCard = ({
   onSaveFeedback,
   isSaving,
   onExportToSheets,
+  isEditing,
+  onStartEditing,
 }) => {
   return (
     <View style={styles.planCard}>
@@ -49,25 +51,38 @@ export const PlanCard = ({
                 index={index}
                 feedback={exerciseFeedback}
                 onUpdateFeedback={(field, val) => onUpdateFeedback(index, field, val)}
+                isEditable={!plan.completado || isEditing}
               />
             );
           })}
 
-          {/* Botón para guardar feedback de toda la sesión */}
-          <TouchableOpacity
-            style={[styles.saveFeedbackButton, isSaving && styles.disabledButton]}
-            onPress={onSaveFeedback}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
+          {/* Botón condicional de Guardar o Editar según el estado de completado y modo edición */}
+          {plan.completado && !isEditing ? (
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={onStartEditing}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialCommunityIcons name="content-save-check" size={20} color="#fff" style={{ marginRight: 8 }} />
-                <Text style={styles.saveFeedbackButtonText}>Guardar Feedback de la Sesión</Text>
+                <MaterialCommunityIcons name="pencil" size={20} color="#fff" style={{ marginRight: 8 }} />
+                <Text style={styles.editButtonText}>Editar Sesión</Text>
               </View>
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.saveFeedbackButton, isSaving && styles.disabledButton]}
+              onPress={onSaveFeedback}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <MaterialCommunityIcons name="content-save-check" size={20} color="#fff" style={{ marginRight: 8 }} />
+                  <Text style={styles.saveFeedbackButtonText}>Guardar Feedback de la Sesión</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
 
           {/* Botón para exportar a Google Sheets si ya está completado */}
           {plan.completado && (
@@ -177,6 +192,25 @@ const styles = StyleSheet.create({
   completedBadgeText: {
     fontSize: 11,
     color: '#2e7d32',
+    fontWeight: 'bold',
+  },
+  editButton: {
+    flexDirection: 'row',
+    backgroundColor: '#007aff',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    shadowColor: '#007aff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

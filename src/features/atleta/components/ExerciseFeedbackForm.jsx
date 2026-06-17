@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
-export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback }) => {
+export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = true }) => {
   const effortLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
@@ -11,11 +11,12 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback }) => {
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>Peso usado:</Text>
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput, !isEditable && styles.textInputDisabled]}
           placeholder="Ej: 50 kg, 20 lbs..."
           placeholderTextColor="#999"
           value={feedback.peso}
           onChangeText={(val) => onUpdateFeedback('peso', val)}
+          editable={isEditable}
         />
       </View>
 
@@ -24,38 +25,46 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback }) => {
           Esfuerzo (RPE 1-10): {feedback.esfuerzo ? `${feedback.esfuerzo}/10` : 'No seleccionado'}
         </Text>
         <View style={styles.effortButtonsRow}>
-          {effortLevels.map((num) => (
-            <TouchableOpacity
-              key={num}
-              style={[
-                styles.effortButton,
-                feedback.esfuerzo === num && styles.effortButtonSelected
-              ]}
-              onPress={() => onUpdateFeedback('esfuerzo', num)}
-            >
-              <Text
+          {effortLevels.map((num) => {
+            const isSelected = feedback.esfuerzo === num;
+            return (
+              <TouchableOpacity
+                key={num}
                 style={[
-                  styles.effortButtonText,
-                  feedback.esfuerzo === num && styles.effortButtonTextSelected
+                  styles.effortButton,
+                  isSelected && styles.effortButtonSelected,
+                  !isEditable && styles.effortButtonDisabled,
+                  !isEditable && isSelected && styles.effortButtonSelectedDisabled
                 ]}
+                onPress={() => onUpdateFeedback('esfuerzo', num)}
+                disabled={!isEditable}
               >
-                {num}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.effortButtonText,
+                    isSelected && styles.effortButtonTextSelected,
+                    !isEditable && styles.effortButtonTextDisabled
+                  ]}
+                >
+                  {num}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>Comentarios:</Text>
         <TextInput
-          style={[styles.textInput, styles.multilineInput]}
+          style={[styles.textInput, styles.multilineInput, !isEditable && styles.textInputDisabled]}
           placeholder="Comentarios sobre cómo te sentiste..."
           placeholderTextColor="#999"
           multiline
           numberOfLines={2}
           value={feedback.comentarios}
           onChangeText={(val) => onUpdateFeedback('comentarios', val)}
+          editable={isEditable}
         />
       </View>
     </View>
@@ -131,5 +140,22 @@ const styles = StyleSheet.create({
   },
   effortButtonTextSelected: {
     color: '#fff',
+  },
+  textInputDisabled: {
+    backgroundColor: '#f1f1f5',
+    color: '#777',
+    borderColor: '#e4e4eb',
+  },
+  effortButtonDisabled: {
+    backgroundColor: '#f5f5f9',
+    borderColor: '#e4e4eb',
+    opacity: 0.7,
+  },
+  effortButtonSelectedDisabled: {
+    backgroundColor: '#b59ce6',
+    borderColor: '#b59ce6',
+  },
+  effortButtonTextDisabled: {
+    color: '#aaa',
   },
 });
