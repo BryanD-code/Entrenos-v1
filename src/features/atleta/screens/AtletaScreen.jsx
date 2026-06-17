@@ -1,33 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert, TouchableOpacity, Button } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Alert, Text, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Header } from '../../../components/Header';
-import { Footer } from '../../../components/Footer';
 import { useAuthGlobal } from '../../../context/AuthContext';
-import { getMisPlanes } from '../services/atletaService';
-import { useVideoPlayer, VideoView } from 'expo-video';
-
-const ExerciseVideo = ({ videoUrl }) => {
-  const player = useVideoPlayer(videoUrl, player => {
-    player.loop = true;
-
-
-  });
-
-  return (
-    <View style={styles.videoContainer}>
-      <VideoView
-        style={styles.video}
-        player={player}
-        fullscreenOptions={{
-          visible: true
-        }}
-
-        contentFit="contain"
-      />
-    </View>
-  );
-};
+import { getMisPlanes, savePlanFeedback } from '../services/atletaService';
+import { PlanCard } from '../components/PlanCard';
 
 const AtletaScreen = () => {
   const { user } = useAuthGlobal();
@@ -35,17 +12,41 @@ const AtletaScreen = () => {
   const [loading, setLoading] = useState(true);
   const [expandedPlanId, setExpandedPlanId] = useState(null);
 
-  useEffect(() => {
-    fetchPlanes();
-  }, []);
+  // Estados para controlar el feedback rellenable y de guardado
+  const [feedbackState, setFeedbackState] = useState({});
+  const [savingPlanId, setSavingPlanId] = useState(null);
 
-  const fetchPlanes = async () => {
+  // Función auxiliar para mostrar alertas compatibles con Web y Nativo
+  const showAlert = (title, message) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
+  const fetchPlanes = useCallback(async () => {
     try {
       if (user?.uid) {
         const data = await getMisPlanes(user.uid);
         setPlanes(data);
+
+        // Inicializamos el estado local de feedback con los datos ya existentes (si los hay)
+        const initialFeedback = {};
+        data.forEach((plan) => {
+          initialFeedback[plan.id] = {};
+          plan.ejercicios?.forEach((item, index) => {
+            initialFeedback[plan.id][index] = {
+              peso: item.feedback?.peso || '',
+              esfuerzo: item.feedback?.esfuerzo || null,
+              comentarios: item.feedback?.comentarios || '',
+            };
+          });
+        });
+        setFeedbackState(initialFeedback);
+
         if (data.length > 0) {
-          Alert.alert("¡Nuevos Entrenamientos!", "Tienes planes asignados por tu entrenador.");
+          showAlert("¡Nuevos Entrenamientos!", "Tienes planes asignados por tu entrenador.");
         }
       }
     } catch (error) {
@@ -53,10 +54,159 @@ const AtletaScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.uid]);
+
+  useEffect(() => {
+    fetchPlanes();
+  }, [fetchPlanes]);
 
   const toggleExpand = (id) => {
     setExpandedPlanId(expandedPlanId === id ? null : id);
+  };
+
+  const handleUpdateFeedback = (planId, index, field, value) => {
+    setFeedbackState(prev => ({
+      ...prev,
+      [planId]: {
+        ...prev[planId],
+        [index]: {
+          ...prev[planId]?.[index],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleSaveFeedback = async (plan) => {
+    try {
+      setSavingPlanId(plan.id);
+
+      // Mapeamos los ejercicios actuales e inyectamos su respectivo feedback
+      const updatedEjercicios = plan.ejercicios.map((item, index) => {
+        const feedback = feedbackState[plan.id]?.[index] || { peso: '', esfuerzo: null, comentarios: '' };
+        return {
+          ...item,
+          feedback: {
+            peso: feedback.peso,
+            esfuerzo: feedback.esfuerzo,
+            comentarios: feedback.comentarios
+          }
+        };
+      });
+
+      const resetEjercicios = await savePlanFeedback(plan.id, plan, updatedEjercicios);
+
+      // Actualizamos el estado local del plan a completado = false y ejercicios con feedback vaciado
+      setPlanes(prevPlanes =>
+        prevPlanes.map(p =>
+          p.id === plan.id ? { ...p, ejercicios: resetEjercicios, completado: false } : p
+        )
+      );
+
+      // Vaciamos el feedbackState local de este plan
+      setFeedbackState(prev => {
+        const nextFeedback = { ...prev };
+        if (nextFeedback[plan.id]) {
+          const resetFeedback = {};
+          plan.ejercicios.forEach((item, index) => {
+            resetFeedback[index] = { peso: '', esfuerzo: null, comentarios: '' };
+          });
+          nextFeedback[plan.id] = resetFeedback;
+        }
+        return nextFeedback;
+      });
+
+      // Intentar exportación automática a Google Sheets si la URL está definida
+      const googleScriptUrl = process.env.EXPO_PUBLIC_GOOGLE_SCRIPT_URL;
+      if (googleScriptUrl) {
+        try {
+          const response = await fetch(googleScriptUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+            body: JSON.stringify({
+              atletaName: user.username || '',
+              atletaEmail: user.email || '',
+              dia: plan.dia,
+              tituloSesion: plan.tituloSesion,
+              ejercicios: updatedEjercicios
+            })
+          });
+          const resJson = await response.json();
+          if (resJson.status === "success") {
+            showAlert("¡Éxito!", "Tu feedback se ha guardado en la base de datos como una nueva sesión completada y exportado a Google Sheets correctamente.");
+            return;
+          } else {
+            throw new Error(resJson.message || "Error devuelto por Apps Script");
+          }
+        } catch (sheetError) {
+          console.error("Error al exportar automáticamente a Google Sheets:", sheetError);
+          showAlert("¡Guardado!", "Feedback guardado en Firebase como una nueva sesión completada, pero ocurrió un problema al exportar a Google Sheets: " + sheetError.message);
+          return;
+        }
+      }
+
+      showAlert("¡Éxito!", "Tu feedback se ha guardado en la base de datos como una nueva sesión completada correctamente.");
+    } catch (error) {
+      console.error("Error guardando feedback:", error);
+      showAlert("Error", "No se pudo guardar el feedback: " + error.message);
+    } finally {
+      setSavingPlanId(null);
+    }
+  };
+
+  const handleExportToSheets = async (plan) => {
+    const googleScriptUrl = process.env.EXPO_PUBLIC_GOOGLE_SCRIPT_URL;
+    if (!googleScriptUrl) {
+      showAlert(
+        "Google Sheets no configurado",
+        "Por favor, configure la variable EXPO_PUBLIC_GOOGLE_SCRIPT_URL en su archivo .env con la URL de su Web App de Google Apps Script."
+      );
+      return;
+    }
+
+    try {
+      setSavingPlanId(plan.id);
+
+      const ejercicios = plan.ejercicios.map((item, index) => {
+        const feedback = feedbackState[plan.id]?.[index] || { peso: '', esfuerzo: null, comentarios: '' };
+        return {
+          ...item,
+          feedback: {
+            peso: feedback.peso,
+            esfuerzo: feedback.esfuerzo,
+            comentarios: feedback.comentarios
+          }
+        };
+      });
+
+      const response = await fetch(googleScriptUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: JSON.stringify({
+          atletaName: user.username || '',
+          atletaEmail: user.email || '',
+          dia: plan.dia,
+          tituloSesion: plan.tituloSesion,
+          ejercicios: ejercicios
+        })
+      });
+
+      const resJson = await response.json();
+      if (resJson.status === "success") {
+        showAlert("¡Exportado!", "La sesión ha sido exportada a Google Sheets con éxito.");
+      } else {
+        throw new Error(resJson.message || "Error desconocido del script");
+      }
+    } catch (error) {
+      console.error("Error al exportar a Google Sheets:", error);
+      showAlert("Error de Exportación", "No se pudo exportar la sesión: " + error.message);
+    } finally {
+      setSavingPlanId(null);
+    }
   };
 
   return (
@@ -64,7 +214,7 @@ const AtletaScreen = () => {
       <Header
         title="Mi Entrenamiento"
         rightIcon="notifications-outline"
-        onRightIconPress={() => Alert.alert("Notificaciones", "Sin novedades")}
+        onRightIconPress={() => showAlert("Notificaciones", "Sin novedades")}
       />
 
       <View style={styles.content}>
@@ -78,52 +228,21 @@ const AtletaScreen = () => {
         ) : (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             {planes.map((plan) => (
-              <View key={plan.id} style={styles.planCard}>
-                <TouchableOpacity
-                  style={styles.planHeader}
-                  onPress={() => toggleExpand(plan.id)}
-                >
-                  <View>
-                    <Text style={styles.planTitle}>{plan.tituloSesion}</Text>
-                    <Text style={styles.planDay}>{plan.dia}</Text>
-                  </View>
-                  <MaterialCommunityIcons
-                    name={expandedPlanId === plan.id ? "chevron-up" : "chevron-down"}
-                    size={24}
-                    color="#666"
-                  />
-                </TouchableOpacity>
-
-                {expandedPlanId === plan.id && (
-                  <View style={styles.exercisesList}>
-                    {plan.ejercicios?.map((item, index) => (
-                      <View key={index} style={styles.exerciseItem}>
-                        <Text style={styles.exerciseName}>{index + 1}. {item.ejercicio.nombre}</Text>
-                        <Text style={styles.exerciseDetails}>
-                          {item.series} series | {item.repeticiones} reps | {item.descanso}
-                        </Text>
-                        {item.ejercicio?.videoUrl ? (
-                          <ExerciseVideo videoUrl={item.ejercicio.videoUrl} />
-                        ) : (
-                          <View style={[styles.videoContainer, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#eee' }]}>
-                            <MaterialCommunityIcons name="video-off" size={40} color="#999" />
-                            <Text style={{ color: '#999', marginTop: 8 }}>Video no disponible</Text>
-                          </View>
-                        )}
-                        {item.observaciones && (
-                          <Text style={styles.exerciseObs}>Nota: {item.observaciones}</Text>
-                        )}
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </View>
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                isExpanded={expandedPlanId === plan.id}
+                onToggleExpand={() => toggleExpand(plan.id)}
+                feedbackState={feedbackState[plan.id] || {}}
+                onUpdateFeedback={(index, field, val) => handleUpdateFeedback(plan.id, index, field, val)}
+                onSaveFeedback={() => handleSaveFeedback(plan)}
+                isSaving={savingPlanId === plan.id}
+                onExportToSheets={() => handleExportToSheets(plan)}
+              />
             ))}
           </ScrollView>
         )}
       </View>
-      {/* <Footer/> */}
-      
     </View>
   );
 };
@@ -151,81 +270,6 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 10,
     textAlign: 'center',
-  },
-  planCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  planHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  planTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  planDay: {
-    fontSize: 14,
-    color: '#6200ee',
-    marginTop: 4,
-    fontWeight: '600',
-  },
-  exercisesList: {
-    backgroundColor: '#fafafa',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    padding: 16,
-  },
-  exerciseItem: {
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  exerciseName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#444',
-  },
-  exerciseDetails: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-  },
-  exerciseObs: {
-    fontSize: 12,
-    color: '#888',
-    fontStyle: 'italic',
-    marginTop: 2,
-  },
-  videoContainer: {
-    width: '100%',
-    aspectRatio: 16 / 9,
-    marginTop: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#000',
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  video: {
-    width: '100%',
-    height: '100%',
   },
 });
 
