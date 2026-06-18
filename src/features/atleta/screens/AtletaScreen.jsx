@@ -192,7 +192,8 @@ const AtletaScreen = () => {
               return {
                 dia: p.dia || '',
                 tituloSesion: p.tituloSesion || '',
-                ejercicios: exercises
+                ejercicios: exercises,
+                completado: p.id === plan.id ? true : (p.completado || false)
               };
             });
             payload = {
@@ -299,6 +300,25 @@ const AtletaScreen = () => {
     }
 
     try {
+      // Validar que todas las sesiones de esa semana estén marcadas como completadas (en true)
+      const allSessionsCompleted = week.sesiones && week.sesiones.length > 0 && week.sesiones.every(sesion => {
+        if (sesion.completado !== undefined) {
+          return sesion.completado === true;
+        }
+        // Fallback para sesiones antiguas que no tengan la propiedad 'completado' guardada:
+        // Se considera completada si tiene ejercicios registrados y cada uno tiene peso y esfuerzo
+        return sesion.ejercicios && sesion.ejercicios.every(ex => 
+          ex.feedback && 
+          ex.feedback.peso !== undefined && ex.feedback.peso !== null && String(ex.feedback.peso).trim() !== '' &&
+          ex.feedback.esfuerzo !== undefined && ex.feedback.esfuerzo !== null && ex.feedback.esfuerzo !== ''
+        );
+      });
+
+      if (!allSessionsCompleted) {
+        showAlert("Error de Validación", "No se puede exportar la semana completa porque contiene sesiones no completadas.");
+        return;
+      }
+
       setLoading(true);
 
       // Damos formato a la fecha de finalización si es un timestamp de Firestore
