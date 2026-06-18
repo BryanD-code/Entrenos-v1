@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator, Alert, Text, Platform, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Alert, Text, Platform, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Header } from '../../../components/Header';
 import { useAuthGlobal } from '../../../context/AuthContext';
 import { getMisPlanes, savePlanFeedbackSingle, archiveAllPlansAndReset, getEntrenamientosCompletados } from '../services/atletaService';
 import { PlanCard } from '../components/PlanCard';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 const AtletaScreen = () => {
   const { user } = useAuthGlobal();
+  const { theme, isDark } = useThemeGlobal();
   const [planes, setPlanes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedPlanId, setExpandedPlanId] = useState(null);
@@ -74,6 +76,12 @@ const AtletaScreen = () => {
   }, [fetchPlanes, fetchCompletedWeeks]);
 
   const toggleExpand = (id) => {
+    if (Platform.OS === 'android') {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    }
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedPlanId(expandedPlanId === id ? null : id);
   };
 
@@ -361,7 +369,7 @@ const AtletaScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <Header
         title="Mi Entrenamiento"
         rightIcon="notifications-outline"
@@ -370,11 +378,11 @@ const AtletaScreen = () => {
 
       <View style={styles.content}>
         {loading ? (
-          <ActivityIndicator size="large" color="#6200ee" style={{ marginTop: 50 }} />
+          <ActivityIndicator size="large" color={theme.primary} style={{ marginTop: 50 }} />
         ) : planes.length === 0 ? (
           <View style={styles.emptyState}>
-            <MaterialCommunityIcons name="clipboard-text-outline" size={60} color="#ccc" />
-            <Text style={styles.emptyText}>No tienes entrenamientos asignados aún.</Text>
+            <MaterialCommunityIcons name="clipboard-text-outline" size={60} color={theme.textMuted} />
+            <Text style={[styles.emptyText, { color: theme.textMuted }]}>No tienes entrenamientos asignados aún.</Text>
           </View>
         ) : (
           <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -391,8 +399,21 @@ const AtletaScreen = () => {
 
             {/* Historial de Semanas Completadas para Exportación */}
             {completedWeeks.length > 0 && (
-              <View style={styles.historySection}>
-                <Text style={styles.historyTitle}>Historial de Semanas Completadas</Text>
+              <View style={[
+                styles.historySection, 
+                { 
+                  backgroundColor: theme.card, 
+                  borderColor: theme.border,
+                  shadowColor: isDark ? '#000' : '#888'
+                }
+              ]}>
+                <Text style={[
+                  styles.historyTitle, 
+                  { 
+                    color: theme.text, 
+                    borderBottomColor: theme.border 
+                  }
+                ]}>Historial de Semanas Completadas</Text>
                 {completedWeeks.map((week) => {
                   let dateStr = "Reciente";
                   if (week.fechaCompletado) {
@@ -403,11 +424,11 @@ const AtletaScreen = () => {
                     }
                   }
                   return (
-                    <View key={week.id} style={styles.historyItem}>
+                    <View key={week.id} style={[styles.historyItem, { borderBottomColor: theme.border }]}>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.historyText}>Semana finalizada el:</Text>
-                        <Text style={styles.historyDateText}>{dateStr}</Text>
-                        <Text style={styles.historySubText}>{week.sesiones?.length || 0} sesiones registradas</Text>
+                        <Text style={[styles.historyText, { color: theme.textMuted }]}>Semana finalizada el:</Text>
+                        <Text style={[styles.historyDateText, { color: theme.text }]}>{dateStr}</Text>
+                        <Text style={[styles.historySubText, { color: theme.textMuted }]}>{week.sesiones?.length || 0} sesiones registradas</Text>
                       </View>
                       <TouchableOpacity
                         style={styles.exportWeekButton}

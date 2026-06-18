@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, Pressable, View, Alert } from 'react-native';
+import { Modal, StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthInput } from './AuthInput';
 import { useLogin } from '../hooks/useLogin';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 const ModalRegistro = ({ visible, onClose }) => {
-  const { email, setEmail, password, setPassword, loading, handleRegister } = useLogin();
+  const { email, setEmail, password, setPassword, handleRegister } = useLogin();
+  const { theme, isDark } = useThemeGlobal();
 
-  //  Nuevo estado para saber cuál está seleccionado
   const [selectedRole, setSelectedRole] = useState(null);
   const [username, setUsername] = useState('');
 
-  // Función auxiliar para enviar el registro final
   const onFinalRegister = () => {
     if (!selectedRole) {
       Alert.alert("Atención", "Por favor selecciona un rol (Entrenador o Atleta)");
@@ -20,20 +21,19 @@ const ModalRegistro = ({ visible, onClose }) => {
       Alert.alert("Atención", "Por favor ingresa un nombre de usuario");
       return;
     }
-    // Llama al hook con el rol seleccionado
     handleRegister(selectedRole, username);
   };
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>Completa el registro</Text>
+        <View style={[styles.modalView, { backgroundColor: theme.card, shadowColor: isDark ? '#000' : '#888' }]}>
+          <Text style={[styles.modalText, { color: theme.text }]}>Crea tu Cuenta</Text>
 
           <View style={styles.inputContainer}>
             <AuthInput
@@ -54,70 +54,80 @@ const ModalRegistro = ({ visible, onClose }) => {
             />
           </View>
 
-          <Text style={styles.labelRol}>Selecciona tu rol para registrarte:</Text>
+          <Text style={[styles.labelRol, { color: theme.textMuted }]}>Selecciona tu rol en la plataforma:</Text>
 
           <View style={styles.botonesRow}>
-
             {/* --- Botón Entrenador --- */}
-            <Pressable
-              // LOGICA DE ESTILO CONDICIONAL:
+            <TouchableOpacity
+              activeOpacity={0.8}
               style={[
-                styles.button,
-                styles.btnMitad,
-                // Si este es el seleccionado -> AZUL (#2196F3)
-                selectedRole === 'entrenador'
-                  ? { backgroundColor: '#2196F3', opacity: 1 }
-                  // Si el OTRO está seleccionado -> OPACO (gris o transparente)
-                  : selectedRole === 'atleta'
-                    ? { backgroundColor: '#6200ee', opacity: 0.3 }
-                    // Si ninguno está seleccionado -> Color Original
-                    : styles.bgEntrenador
+                styles.roleCard,
+                {
+                  backgroundColor: theme.inputBackground,
+                  borderColor: selectedRole === 'entrenador' ? theme.primary : theme.border,
+                }
               ]}
-              // Al presionar, solo guardamos el estado, no registramos aún
               onPress={() => setSelectedRole('entrenador')}
             >
-              <Text style={styles.textStyle}>Entrenador</Text>
-            </Pressable>
+              <View style={[styles.iconWrapper, { backgroundColor: selectedRole === 'entrenador' ? theme.primary : theme.border }]}>
+                <MaterialCommunityIcons 
+                  name="whistle-outline" 
+                  size={24} 
+                  color={selectedRole === 'entrenador' ? (isDark ? '#0f172a' : '#fff') : theme.textMuted} 
+                />
+              </View>
+              <Text style={[styles.roleText, { color: theme.text, fontWeight: selectedRole === 'entrenador' ? 'bold' : '600' }]}>
+                Entrenador
+              </Text>
+            </TouchableOpacity>
 
             {/* --- Botón Atleta --- */}
-            <Pressable
+            <TouchableOpacity
+              activeOpacity={0.8}
               style={[
-                styles.button,
-                styles.btnMitad,
-                // Misma lógica invertida
-                selectedRole === 'atleta'
-                  ? { backgroundColor: '#2196F3', opacity: 1 }
-                  : selectedRole === 'entrenador'
-                    ? { backgroundColor: '#03dac6', opacity: 0.3 }
-                    : styles.bgAtleta
+                styles.roleCard,
+                {
+                  backgroundColor: theme.inputBackground,
+                  borderColor: selectedRole === 'atleta' ? theme.primary : theme.border,
+                }
               ]}
               onPress={() => setSelectedRole('atleta')}
             >
-              <Text style={styles.textStyle}>Atleta</Text>
-            </Pressable>
+              <View style={[styles.iconWrapper, { backgroundColor: selectedRole === 'atleta' ? theme.primary : theme.border }]}>
+                <MaterialCommunityIcons 
+                  name="run" 
+                  size={24} 
+                  color={selectedRole === 'atleta' ? (isDark ? '#0f172a' : '#fff') : theme.textMuted} 
+                />
+              </View>
+              <Text style={[styles.roleText, { color: theme.text, fontWeight: selectedRole === 'atleta' ? 'bold' : '600' }]}>
+                Atleta
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          {/* --- BOTÓN ACEPTAR --- */}
-          {/* Ahora este botón ejecuta el registro real con el rol seleccionado */}
-          <Pressable
-            style={[styles.button, styles.bgRegistrar, styles.btnFull]}
-            onPress={onFinalRegister}>
-            <Text style={styles.textStyle}>Aceptar</Text>
-          </Pressable>
+          {/* --- BOTONES DE ACCIÓN --- */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.actionBtn, { backgroundColor: theme.primary }]}
+            onPress={onFinalRegister}
+          >
+            <Text style={[styles.actionBtnText, { color: isDark ? '#0f172a' : '#fff' }]}>Registrarse</Text>
+          </TouchableOpacity>
 
-          <Pressable
-            style={[styles.button, styles.bgCancelar, styles.btnFull]}
-            onPress={onClose}>
-            <Text style={styles.textStyle}>Cancelar</Text>
-          </Pressable>
-
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.cancelBtn, { borderColor: theme.border }]}
+            onPress={onClose}
+          >
+            <Text style={[styles.cancelBtnText, { color: theme.textMuted }]}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
   );
 };
 
-// los estilos se mantienen exactamente igual
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
@@ -128,70 +138,82 @@ const styles = StyleSheet.create({
   modalView: {
     width: '90%',
     maxWidth: 400,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
+    borderRadius: 24,
+    padding: 24,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 8,
   },
   modalText: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 10,
   },
   labelRol: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 10,
-    marginTop: 5,
+    marginBottom: 12,
+    marginTop: 4,
+    alignSelf: 'flex-start',
   },
   botonesRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 15,
+    marginBottom: 24,
   },
-  button: {
-    borderRadius: 12,
-    paddingVertical: 12,
-    elevation: 2,
+  roleCard: {
+    width: '48%',
+    borderWidth: 2,
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 8,
   },
-  btnMitad: {
-    width: '48%',
+  roleText: {
+    fontSize: 15,
   },
-  btnFull: {
+  actionBtn: {
     width: '100%',
-    marginTop: 10,
+    height: 52,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  bgEntrenador: {
-    backgroundColor: '#6200ee',
-  },
-  bgAtleta: {
-    backgroundColor: '#03dac6',
-  },
-  bgRegistrar: {
-    backgroundColor: '#2196F3',
-  },
-  bgCancelar: {
-    backgroundColor: '#ff5252',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+  actionBtnText: {
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelBtn: {
+    width: '100%',
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  cancelBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

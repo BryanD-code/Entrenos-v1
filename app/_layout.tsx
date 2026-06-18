@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { AuthProvider, useAuthGlobal } from "../src/context/AuthContext"; // Ajusta la ruta
+import { ThemeProvider } from "../src/context/ThemeContext";
 
 //  Este componente maneja la lógica de protección
 // (Solo puede existir PORQUE está dentro del Provider abajo)
@@ -41,7 +42,9 @@ function InitialLayout() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <InitialLayout />
+      <ThemeProvider>
+        <InitialLayout />
+      </ThemeProvider>
     </AuthProvider>
   );
 }

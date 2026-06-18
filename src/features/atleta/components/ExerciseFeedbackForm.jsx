@@ -1,19 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = true }) => {
+  const { theme, isDark } = useThemeGlobal();
   const effortLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
-    <View style={styles.feedbackFormContainer}>
-      <Text style={styles.feedbackFormTitle}>Registrar Progreso</Text>
+    <View style={[
+      styles.feedbackFormContainer, 
+      { 
+        backgroundColor: isDark ? '#141b2b' : '#f8fafc', 
+        borderColor: theme.border 
+      }
+    ]}>
+      <Text style={[styles.feedbackFormTitle, { color: theme.primary }]}>Registrar Progreso</Text>
       
       <View style={styles.inputRow}>
-        <Text style={styles.inputLabel}>Peso usado:</Text>
+        <Text style={[styles.inputLabel, { color: theme.textMuted }]}>Peso usado:</Text>
         <TextInput
-          style={[styles.textInput, !isEditable && styles.textInputDisabled]}
+          style={[
+            styles.textInput, 
+            { 
+              backgroundColor: theme.card, 
+              borderColor: theme.border,
+              color: theme.text
+            },
+            !isEditable && styles.textInputDisabled
+          ]}
           placeholder="Ej: 50 kg, 20 lbs..."
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.textMuted}
           value={feedback.peso}
           onChangeText={(val) => onUpdateFeedback('peso', val)}
           editable={isEditable}
@@ -21,7 +37,7 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = 
       </View>
 
       <View style={styles.effortContainer}>
-        <Text style={styles.inputLabel}>
+        <Text style={[styles.inputLabel, { color: theme.textMuted }]}>
           Esfuerzo (RPE 1-10): {feedback.esfuerzo ? `${feedback.esfuerzo}/10` : 'No seleccionado'}
         </Text>
         <View style={styles.effortButtonsRow}>
@@ -32,17 +48,23 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = 
                 key={num}
                 style={[
                   styles.effortButton,
-                  isSelected && styles.effortButtonSelected,
+                  {
+                    backgroundColor: isSelected ? theme.primary : theme.card,
+                    borderColor: isSelected ? theme.primary : theme.border,
+                  },
                   !isEditable && styles.effortButtonDisabled,
                   !isEditable && isSelected && styles.effortButtonSelectedDisabled
                 ]}
                 onPress={() => onUpdateFeedback('esfuerzo', num)}
                 disabled={!isEditable}
+                activeOpacity={0.8}
               >
                 <Text
                   style={[
                     styles.effortButtonText,
-                    isSelected && styles.effortButtonTextSelected,
+                    {
+                      color: isSelected ? (isDark ? '#0f172a' : '#fff') : theme.textMuted
+                    },
                     !isEditable && styles.effortButtonTextDisabled
                   ]}
                 >
@@ -55,11 +77,20 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = 
       </View>
 
       <View style={styles.inputRow}>
-        <Text style={styles.inputLabel}>Comentarios:</Text>
+        <Text style={[styles.inputLabel, { color: theme.textMuted }]}>Comentarios:</Text>
         <TextInput
-          style={[styles.textInput, styles.multilineInput, !isEditable && styles.textInputDisabled]}
+          style={[
+            styles.textInput, 
+            styles.multilineInput, 
+            { 
+              backgroundColor: theme.card, 
+              borderColor: theme.border,
+              color: theme.text
+            },
+            !isEditable && styles.textInputDisabled
+          ]}
           placeholder="Comentarios sobre cómo te sentiste..."
-          placeholderTextColor="#999"
+          placeholderTextColor={theme.textMuted}
           multiline
           numberOfLines={2}
           value={feedback.comentarios}
@@ -74,43 +105,36 @@ export const ExerciseFeedbackForm = ({ feedback, onUpdateFeedback, isEditable = 
 const styles = StyleSheet.create({
   feedbackFormContainer: {
     marginTop: 12,
-    padding: 12,
-    backgroundColor: '#f9f9fb',
-    borderRadius: 8,
+    padding: 14,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e8e8ed',
   },
   feedbackFormTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#6200ee',
-    marginBottom: 8,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   inputRow: {
     marginBottom: 10,
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    color: '#666',
-    marginBottom: 4,
+    fontWeight: '600',
+    marginBottom: 6,
   },
   textInput: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#dcdce2',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderWidth: 1.5,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     fontSize: 14,
-    color: '#333',
   },
   multilineInput: {
     height: 50,
     textAlignVertical: 'top',
   },
   effortContainer: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   effortButtonsRow: {
     flexDirection: 'row',
@@ -123,39 +147,25 @@ const styles = StyleSheet.create({
     maxWidth: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#dcdce2',
-    borderRadius: 6,
+    borderWidth: 1.5,
+    borderRadius: 8,
     marginHorizontal: 1,
   },
-  effortButtonSelected: {
-    backgroundColor: '#6200ee',
-    borderColor: '#6200ee',
-  },
   effortButtonText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
-    color: '#666',
-  },
-  effortButtonTextSelected: {
-    color: '#fff',
   },
   textInputDisabled: {
-    backgroundColor: '#f1f1f5',
-    color: '#777',
-    borderColor: '#e4e4eb',
+    backgroundColor: '#e2e8f0',
+    opacity: 0.6,
   },
   effortButtonDisabled: {
-    backgroundColor: '#f5f5f9',
-    borderColor: '#e4e4eb',
-    opacity: 0.7,
+    opacity: 0.5,
   },
   effortButtonSelectedDisabled: {
-    backgroundColor: '#b59ce6',
-    borderColor: '#b59ce6',
+    opacity: 0.7,
   },
   effortButtonTextDisabled: {
-    color: '#aaa',
+    opacity: 0.7,
   },
 });

@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from '../config/firebase';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Aquí guardaremos usuario + rol + nombre
+  const [user, setUser] = useState(null); // Aquí guardaremos usuario + rol + nombre + photoURL
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
             setUser({
               uid: currentUser.uid,
               email: currentUser.email,
-              ...userDocSnap.data() // Esto inyecta { role: '...', username: '...' }
+              ...userDocSnap.data() // Esto inyecta { role: '...', username: '...', photoURL: '...' }
             });
           } else {
             console.log("Usuario sin registro en base de datos");
@@ -52,6 +53,7 @@ export const AuthProvider = ({ children }) => {
 
     return unsubscribe; // Limpieza del observador
   }, []);
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -61,8 +63,43 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfileImage = async (uri) => {
+    if (!user) return;
+    try {
+      // 1. Obtener la referencia de la imagen y convertirla a blob
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      
+      // 2. Definir la ruta en Storage: avatars/uid.jpg
+      const fileRef = ref(storage, `avatars/${user.uid}.jpg`);
+      
+      // 3. Subir el archivo
+      await uploadBytes(fileRef, blob);
+      
+      // 4. Obtener la URL de descarga
+      const downloadUrl = await getDownloadURL(fileRef);
+
+      // 5. Actualizar la referencia en la colección 'users' de Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, {
+        photoURL: downloadUrl
+      });
+
+      // 6. Actualizar el estado local global
+      setUser(prev => ({
+        ...prev,
+        photoURL: downloadUrl
+      }));
+
+      return downloadUrl;
+    } catch (error) {
+      console.error("Error al actualizar la imagen de perfil:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, logout, updateProfileImage }}>
       {!loading && children}
     </AuthContext.Provider>
   );

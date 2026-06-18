@@ -1,78 +1,80 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Modal } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLogin } from '../hooks/useLogin';
-//modal de registro
 import ModalRegistro from '../components/ModalRegistro';
-
-
-
-
-
-// IMPORTANTE: Rutas corregidas (3 niveles hacia atrás)
 import { AuthInput } from '../components/AuthInput';
 import { PrimaryButton } from '../../../components/PrimaryButton';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 const LoginScreen = () => {
-  const { email, setEmail, password, setPassword, loading, handleLogin, handleRegister } = useLogin();
+  const { email, setEmail, password, setPassword, loading, handleLogin } = useLogin();
+  const { theme, isDark } = useThemeGlobal();
   const [modalVisible, setModalVisible] = React.useState(false);
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  }
-
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <View style={styles.innerContainer}>
-        <Text style={styles.title}>Bienvenido</Text>
-        <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        {/* Decoración superior premium (círculos difusos en el fondo) */}
+        <View style={[styles.decorCircle, { backgroundColor: theme.primary, opacity: isDark ? 0.15 : 0.08 }]} />
 
-        {/* Usando tu componente reutilizable */}
-        <AuthInput
-          placeholder="Correo electrónico"
-          value={email}
-          onChangeText={setEmail}
-        />
+        <View style={styles.cardContainer}>
+          {/* Logo animado / Icono representativo */}
+          <View style={[styles.logoContainer, { backgroundColor: isDark ? theme.border : theme.primaryMuted }]}>
+            <MaterialCommunityIcons name="fire" size={42} color={theme.primary} />
+          </View>
 
-        {/* Usando tu componente reutilizable */}
-        <AuthInput
-          placeholder="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          <Text style={[styles.title, { color: theme.text }]}>ENTRENOS</Text>
+          <Text style={[styles.subtitle, { color: theme.textMuted }]}>
+            Tu conexión directa con tu entrenador y tus rutinas diarias
+          </Text>
 
-        {/* Usando tu componente reutilizable */}
-        <PrimaryButton
-          title="Iniciar Sesión"
-          onPress={handleLogin}
-          loading={loading}
-          style={{ marginTop: 10 }}
-        />
+          <View style={styles.form}>
+            <AuthInput
+              placeholder="Correo electrónico"
+              value={email}
+              onChangeText={setEmail}
+            />
 
-        {/* ESTE BOTÓN ABRE LA MODAL */}
-        <PrimaryButton
-          title="Regístrate"
-          onPress={() => setModalVisible(true)}
-          style={{ marginTop: 10 }}
-        />
+            <AuthInput
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-        {/* COMPONENTE MODAL */}
-        {/* Le pasamos el estado (true/false) y la función para cerrarse */}
+            <PrimaryButton
+              title="Iniciar Sesión"
+              onPress={handleLogin}
+              loading={loading}
+              style={styles.loginBtn}
+            />
+
+            <View style={styles.dividerRow}>
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+              <Text style={[styles.dividerText, { color: theme.textMuted }]}>o</Text>
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.registerBtn, { borderColor: theme.primary }]}
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.registerBtnText, { color: theme.primary }]}>Crear una Cuenta</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Modal de Registro */}
         <ModalRegistro
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />
-
-
-
-
-
-
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -80,38 +82,89 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
-  innerContainer: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
-    padding: 25,
+    padding: 24,
+    position: 'relative',
+  },
+  decorCircle: {
+    position: 'absolute',
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    top: -50,
+    right: -50,
+    zIndex: 0,
+  },
+  cardContainer: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: 1.5,
     textAlign: 'center',
-    color: '#6200ee'
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 32,
+    lineHeight: 20,
+    paddingHorizontal: 16,
   },
-  linkContainer: {
-    marginTop: 25,
+  form: {
+    width: '100%',
+  },
+  loginBtn: {
+    marginTop: 8,
+  },
+  dividerRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginVertical: 20,
   },
-  linkText: {
-    color: '#666',
-    fontSize: 15
+  dividerLine: {
+    flex: 1,
+    height: 1,
   },
-  linkBold: {
-    color: '#6200ee',
-    fontWeight: 'bold'
-  }
+  dividerText: {
+    marginHorizontal: 12,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  registerBtn: {
+    height: 55,
+    borderWidth: 2,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    marginTop: 10,
+  },
+  registerBtnText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default LoginScreen;

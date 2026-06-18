@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ExerciseItem } from './ExerciseItem';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 export const PlanCard = ({
   plan,
@@ -15,6 +16,8 @@ export const PlanCard = ({
   isEditing,
   onStartEditing,
 }) => {
+  const { theme, isDark } = useThemeGlobal();
+
   const allFieldsCompleted = plan.ejercicios?.every((item, index) => {
     const exerciseFeedback = feedbackState[index] || {};
     const pesoVal = exerciseFeedback.peso;
@@ -26,32 +29,46 @@ export const PlanCard = ({
   }) ?? false;
 
   return (
-    <View style={styles.planCard}>
+    <View style={[
+      styles.planCard, 
+      { 
+        backgroundColor: theme.card, 
+        borderColor: theme.border,
+        shadowColor: isDark ? '#000' : '#888'
+      }
+    ]}>
       <TouchableOpacity
-        style={styles.planHeader}
+        style={[styles.planHeader, { backgroundColor: theme.card }]}
         onPress={onToggleExpand}
+        activeOpacity={0.8}
       >
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.planTitle}>{plan.tituloSesion}</Text>
+            <Text style={[styles.planTitle, { color: theme.text }]}>{plan.tituloSesion}</Text>
             {plan.completado && (
-              <View style={styles.completedBadge}>
-                <MaterialCommunityIcons name="check-circle" size={14} color="#4caf50" style={{ marginRight: 4 }} />
-                <Text style={styles.completedBadgeText}>Completado</Text>
+              <View style={[styles.completedBadge, { backgroundColor: theme.accent + '15' }]}>
+                <MaterialCommunityIcons name="check-circle" size={14} color={theme.accent} style={{ marginRight: 4 }} />
+                <Text style={[styles.completedBadgeText, { color: theme.accent }]}>Completado</Text>
               </View>
             )}
           </View>
-          <Text style={styles.planDay}>{plan.dia}</Text>
+          <Text style={[styles.planDay, { color: theme.primary }]}>{plan.dia}</Text>
         </View>
         <MaterialCommunityIcons
           name={isExpanded ? "chevron-up" : "chevron-down"}
           size={24}
-          color="#666"
+          color={theme.primary}
         />
       </TouchableOpacity>
 
       {isExpanded && (
-        <View style={styles.exercisesList}>
+        <View style={[
+          styles.exercisesList, 
+          { 
+            backgroundColor: isDark ? '#101625' : '#f8f9fb', 
+            borderTopColor: theme.border 
+          }
+        ]}>
           {plan.ejercicios?.map((item, index) => {
             const exerciseFeedback = feedbackState[index] || { peso: '', esfuerzo: null, comentarios: '' };
             return (
@@ -69,26 +86,32 @@ export const PlanCard = ({
           {/* Botón condicional de Guardar o Editar según el estado de completado y modo edición */}
           {plan.completado && !isEditing ? (
             <TouchableOpacity
-              style={styles.editButton}
+              style={[styles.editButton, { backgroundColor: theme.primary }]}
               onPress={onStartEditing}
+              activeOpacity={0.8}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialCommunityIcons name="pencil" size={20} color="#fff" style={{ marginRight: 8 }} />
-                <Text style={styles.editButtonText}>Editar Sesión</Text>
+                <MaterialCommunityIcons name="pencil" size={20} color={isDark ? '#0f172a' : '#fff'} style={{ marginRight: 8 }} />
+                <Text style={[styles.editButtonText, { color: isDark ? '#0f172a' : '#fff' }]}>Editar Sesión</Text>
               </View>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={[styles.saveFeedbackButton, (isSaving || !allFieldsCompleted) && styles.disabledButton]}
+              style={[
+                styles.saveFeedbackButton, 
+                { backgroundColor: theme.primary, shadowColor: theme.primary },
+                (isSaving || !allFieldsCompleted) && styles.disabledButton
+              ]}
               onPress={onSaveFeedback}
               disabled={isSaving || !allFieldsCompleted}
+              activeOpacity={0.8}
             >
               {isSaving ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={isDark ? '#0f172a' : '#fff'} />
               ) : (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialCommunityIcons name="content-save-check" size={20} color="#fff" style={{ marginRight: 8 }} />
-                  <Text style={styles.saveFeedbackButtonText}>Guardar Feedback de la Sesión</Text>
+                  <MaterialCommunityIcons name="content-save-check" size={20} color={isDark ? '#0f172a' : '#fff'} style={{ marginRight: 8 }} />
+                  <Text style={[styles.saveFeedbackButtonText, { color: isDark ? '#0f172a' : '#fff' }]}>Guardar Feedback de la Sesión</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -97,9 +120,14 @@ export const PlanCard = ({
           {/* Botón para exportar a Google Sheets si ya está completado */}
           {plan.completado && (
             <TouchableOpacity
-              style={[styles.exportButton, isSaving && styles.disabledButton]}
+              style={[
+                styles.exportButton, 
+                { backgroundColor: theme.accent, shadowColor: theme.accent },
+                isSaving && styles.disabledButton
+              ]}
               onPress={onExportToSheets}
               disabled={isSaving}
+              activeOpacity={0.8}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <MaterialCommunityIcons name="file-excel" size={20} color="#fff" style={{ marginRight: 8 }} />
@@ -115,112 +143,100 @@ export const PlanCard = ({
 
 const styles = StyleSheet.create({
   planCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
     elevation: 2,
   },
   planHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
+    padding: 18,
   },
   planTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   planDay: {
-    fontSize: 14,
-    color: '#6200ee',
+    fontSize: 13,
     marginTop: 4,
-    fontWeight: '600',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   exercisesList: {
-    backgroundColor: '#fafafa',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
     padding: 16,
   },
   saveFeedbackButton: {
     flexDirection: 'row',
-    backgroundColor: '#6200ee',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
-    shadowColor: '#6200ee',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveFeedbackButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   exportButton: {
     flexDirection: 'row',
-    backgroundColor: '#0f9d58',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
-    shadowColor: '#0f9d58',
-    shadowOffset: { width: 0, height: 2 },
+    marginTop: 12,
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   exportButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   disabledButton: {
-    opacity: 0.6,
+    opacity: 0.4,
+    elevation: 0,
+    shadowOpacity: 0,
   },
   completedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e8f5e9',
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
+    paddingVertical: 3,
+    borderRadius: 20,
     marginLeft: 10,
   },
   completedBadgeText: {
     fontSize: 11,
-    color: '#2e7d32',
     fontWeight: 'bold',
   },
   editButton: {
     flexDirection: 'row',
-    backgroundColor: '#007aff',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
-    shadowColor: '#007aff',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   editButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
 });
