@@ -45,7 +45,8 @@ export const archiveAllPlansAndReset = async (atletaId, atletaInfo, planes, curr
                 planId: p.id,
                 dia: p.dia || '',
                 tituloSesion: p.tituloSesion || '',
-                ejercicios: exercises
+                ejercicios: exercises,
+                completado: p.id === currentPlanId ? true : (p.completado || false)
             };
         });
 

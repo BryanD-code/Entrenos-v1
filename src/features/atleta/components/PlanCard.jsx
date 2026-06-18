@@ -15,6 +15,16 @@ export const PlanCard = ({
   isEditing,
   onStartEditing,
 }) => {
+  const allFieldsCompleted = plan.ejercicios?.every((item, index) => {
+    const exerciseFeedback = feedbackState[index] || {};
+    const pesoVal = exerciseFeedback.peso;
+    const esfuerzoVal = exerciseFeedback.esfuerzo;
+    return (
+      pesoVal !== undefined && pesoVal !== null && String(pesoVal).trim() !== '' &&
+      esfuerzoVal !== undefined && esfuerzoVal !== null && esfuerzoVal !== ''
+    );
+  }) ?? false;
+
   return (
     <View style={styles.planCard}>
       <TouchableOpacity
@@ -69,9 +79,9 @@ export const PlanCard = ({
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={[styles.saveFeedbackButton, isSaving && styles.disabledButton]}
+              style={[styles.saveFeedbackButton, (isSaving || !allFieldsCompleted) && styles.disabledButton]}
               onPress={onSaveFeedback}
-              disabled={isSaving}
+              disabled={isSaving || !allFieldsCompleted}
             >
               {isSaving ? (
                 <ActivityIndicator color="#fff" />
