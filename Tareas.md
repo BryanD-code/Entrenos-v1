@@ -11,6 +11,9 @@ En este archivo iremos registrando y haciendo el seguimiento de las tareas del p
 - [x] Deshabilitar el botón de guardar de cada sesión si no se han completado los campos requeridos (peso usado y esfuerzo) para cada ejercicio de la sesión.
 - [x] Para la exportación a Google Sheets de la semana completa, validar que todas las sesiones de esa semana estén marcadas como completadas (en true).
 - [x] Definir los siguientes pasos del desarrollo.
+- [x] Mejorar la interfaz (UI) con un diseño visual premium: implementar un sistema de tema claro/oscuro con Context API, microinteracciones más sofisticadas en las tarjetas de entrenamiento y rediseñar la pantalla de Login y Registro para que se sientan sumamente profesionales con la paleta de colores actual.
+- [x] Permitir al usuario cambiar su avatar de perfil presionando sobre el mismo en el Header, con opciones para tomar una foto con la cámara o seleccionar una imagen desde su galería, subiéndolo a Firebase Storage.
+
 
 ---
 

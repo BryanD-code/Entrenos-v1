@@ -3,24 +3,29 @@ import { View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ExerciseVideo } from './ExerciseVideo';
 import { ExerciseFeedbackForm } from './ExerciseFeedbackForm';
+import { useThemeGlobal } from '../../../context/ThemeContext';
 
 export const ExerciseItem = ({ item, index, feedback, onUpdateFeedback, isEditable = true }) => {
+  const { theme } = useThemeGlobal();
+
   return (
-    <View style={styles.exerciseItem}>
-      <Text style={styles.exerciseName}>{index + 1}. {item.ejercicio.nombre}</Text>
-      <Text style={styles.exerciseDetails}>
+    <View style={[styles.exerciseItem, { borderBottomColor: theme.border }]}>
+      <Text style={[styles.exerciseName, { color: theme.text }]}>
+        {index + 1}. {item.ejercicio.nombre}
+      </Text>
+      <Text style={[styles.exerciseDetails, { color: theme.textMuted }]}>
         {item.series} series | {item.repeticiones} reps | {item.descanso}
       </Text>
       {item.ejercicio?.videoUrl ? (
         <ExerciseVideo videoUrl={item.ejercicio.videoUrl} />
       ) : (
-        <View style={styles.videoPlaceholder}>
-          <MaterialCommunityIcons name="video-off" size={40} color="#999" />
-          <Text style={styles.videoPlaceholderText}>Video no disponible</Text>
+        <View style={[styles.videoPlaceholder, { backgroundColor: theme.inputBackground }]}>
+          <MaterialCommunityIcons name="video-off" size={40} color={theme.textMuted} />
+          <Text style={[styles.videoPlaceholderText, { color: theme.textMuted }]}>Video no disponible</Text>
         </View>
       )}
       {item.observaciones && (
-        <Text style={styles.exerciseObs}>Nota: {item.observaciones}</Text>
+        <Text style={[styles.exerciseObs, { color: theme.textMuted }]}>Nota: {item.observaciones}</Text>
       )}
 
       {/* Sección de Feedback para el ejercicio */}
@@ -38,23 +43,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   exerciseName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#444',
   },
   exerciseDetails: {
     fontSize: 14,
-    color: '#666',
     marginTop: 2,
   },
   exerciseObs: {
     fontSize: 12,
-    color: '#888',
     fontStyle: 'italic',
-    marginTop: 2,
+    marginTop: 6,
   },
   videoPlaceholder: {
     width: '100%',
@@ -62,13 +63,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
   },
   videoPlaceholderText: {
-    color: '#999',
     marginTop: 8,
   },
 });
