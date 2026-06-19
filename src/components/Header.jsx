@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Modal } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Modal, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -20,6 +20,7 @@ export const Header = ({
 
     const [uploading, setUploading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const cameraInputRef = useRef(null);
 
     const getInitials = (name) => {
         if (!name) return "U";
@@ -35,7 +36,7 @@ export const Header = ({
             }
 
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                mediaTypes: ['images'],
                 allowsEditing: true,
                 aspect: [1, 1],
                 quality: 0.8,
@@ -61,7 +62,39 @@ export const Header = ({
         }
     };
 
+    // Handler para cuando se captura foto desde el input nativo (web/iOS)
+    const handleCameraInputChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setModalVisible(false);
+        setUploading(true);
+        try {
+            // Crear una URL local del archivo capturado
+            const uri = URL.createObjectURL(file);
+            await updateProfileImage(uri);
+            console.log('✅ Avatar actualizado desde cámara (web)');
+        } catch (uploadErr) {
+            console.error('Error subiendo desde cámara:', uploadErr);
+            alert('Error al subir la imagen. Inténtalo de nuevo.');
+        } finally {
+            setUploading(false);
+            // Resetear el input para poder seleccionar la misma foto de nuevo
+            if (cameraInputRef.current) cameraInputRef.current.value = '';
+        }
+    };
+
     const handleTakeNewPhoto = async () => {
+        if (Platform.OS === 'web') {
+            // En web (incluido iOS Safari), usar input nativo con capture
+            // Esto abre directamente la cámara del iPhone/dispositivo
+            if (cameraInputRef.current) {
+                cameraInputRef.current.click();
+            }
+            return;
+        }
+
+        // En nativo (Expo Go / build nativo)
         try {
             const { status } = await ImagePicker.requestCameraPermissionsAsync();
             if (status !== 'granted') {
@@ -70,7 +103,7 @@ export const Header = ({
             }
 
             let result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                mediaTypes: ['images'],
                 allowsEditing: true,
                 aspect: [1, 1],
                 quality: 0.8,
@@ -90,8 +123,8 @@ export const Header = ({
                 }
             }
         } catch (err) {
-            console.error(err);
-            alert('Ocurrió un error al tomar la foto: ' + err.message);
+            console.error('Error con la cámara:', err);
+            alert('La cámara no está disponible en este dispositivo. Usa la galería en su lugar.');
             setUploading(false);
         }
     };
@@ -106,6 +139,18 @@ export const Header = ({
                 shadowColor: isDark ? '#000' : '#888'
             }
         ]}>
+            {/* Input nativo oculto para capturar foto desde cámara en web/iOS */}
+            {Platform.OS === 'web' && (
+                <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleCameraInputChange}
+                    style={{ display: 'none' }}
+                />
+            )}
+
             <View style={styles.headerContent}>
 
                 <View style={styles.leftContainer}>
