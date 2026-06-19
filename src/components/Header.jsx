@@ -42,14 +42,21 @@ export const Header = ({
             });
 
             if (!result.canceled && result.assets && result.assets[0].uri) {
-                setUploading(true);
                 setModalVisible(false);
-                await updateProfileImage(result.assets[0].uri);
+                setUploading(true);
+                try {
+                    await updateProfileImage(result.assets[0].uri);
+                    console.log('✅ Avatar actualizado desde galería');
+                } catch (uploadErr) {
+                    console.error('Error subiendo desde galería:', uploadErr);
+                    alert('Error al subir la imagen. Inténtalo de nuevo.');
+                } finally {
+                    setUploading(false);
+                }
             }
         } catch (err) {
             console.error(err);
             alert('Ocurrió un error al seleccionar la imagen: ' + err.message);
-        } finally {
             setUploading(false);
         }
     };
@@ -70,14 +77,21 @@ export const Header = ({
             });
 
             if (!result.canceled && result.assets && result.assets[0].uri) {
-                setUploading(true);
                 setModalVisible(false);
-                await updateProfileImage(result.assets[0].uri);
+                setUploading(true);
+                try {
+                    await updateProfileImage(result.assets[0].uri);
+                    console.log('✅ Avatar actualizado desde cámara');
+                } catch (uploadErr) {
+                    console.error('Error subiendo desde cámara:', uploadErr);
+                    alert('Error al subir la imagen. Inténtalo de nuevo.');
+                } finally {
+                    setUploading(false);
+                }
             }
         } catch (err) {
             console.error(err);
             alert('Ocurrió un error al tomar la foto: ' + err.message);
-        } finally {
             setUploading(false);
         }
     };
@@ -114,7 +128,11 @@ export const Header = ({
                                 {uploading ? (
                                     <ActivityIndicator size="small" color={theme.primary} />
                                 ) : user?.photoURL ? (
-                                    <Image source={{ uri: user.photoURL }} style={styles.avatarImage} />
+                                    <Image 
+                                        key={user.photoURL} 
+                                        source={{ uri: user.photoURL, cache: 'reload' }} 
+                                        style={styles.avatarImage} 
+                                    />
                                 ) : (
                                     <Text style={[styles.avatarText, { color: theme.primary }]}>
                                         {getInitials(user?.username)}
@@ -200,7 +218,11 @@ export const Header = ({
                             }
                         ]}>
                             {user?.photoURL ? (
-                                <Image source={{ uri: user.photoURL }} style={styles.largeAvatarImage} />
+                                <Image 
+                                    key={`modal-${user.photoURL}`} 
+                                    source={{ uri: user.photoURL, cache: 'reload' }} 
+                                    style={styles.largeAvatarImage} 
+                                />
                             ) : (
                                 <Text style={[styles.largeAvatarText, { color: theme.primary }]}>
                                     {getInitials(user?.username)}
