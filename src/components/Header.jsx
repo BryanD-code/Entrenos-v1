@@ -288,26 +288,40 @@ export const Header = ({
 
                         <Text style={[styles.modalSectionTitle, { color: theme.text }]}>Cambiar Foto de Perfil</Text>
 
-                        {/* Fila de Botones para actualizar foto */}
-                        <View style={styles.modalButtonsRow}>
+                        {/* Botones para actualizar foto */}
+                        {Platform.OS === 'web' ? (
+                            /* En web: un solo botón que abre el selector de archivos.
+                               En iPhone Safari, este selector ofrece "Hacer foto" o "Fototeca" automáticamente */
                             <TouchableOpacity
-                                style={[styles.modalOptionBtnHalf, { backgroundColor: theme.inputBackground }]}
-                                onPress={handleTakeNewPhoto}
-                                activeOpacity={0.8}
-                            >
-                                <Ionicons name="camera-outline" size={20} color={theme.primary} style={{ marginRight: 8 }} />
-                                <Text style={[styles.modalOptionTextSmall, { color: theme.text }]}>Cámara</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.modalOptionBtnHalf, { backgroundColor: theme.inputBackground }]}
+                                style={[styles.modalOptionBtnFull, { backgroundColor: theme.inputBackground }]}
                                 onPress={handleSelectFromGallery}
                                 activeOpacity={0.8}
                             >
-                                <Ionicons name="image-outline" size={20} color={theme.primary} style={{ marginRight: 8 }} />
-                                <Text style={[styles.modalOptionTextSmall, { color: theme.text }]}>Galería</Text>
+                                <Ionicons name="cloud-upload-outline" size={20} color={theme.primary} style={{ marginRight: 8 }} />
+                                <Text style={[styles.modalOptionTextSmall, { color: theme.text }]}>Subir Foto</Text>
                             </TouchableOpacity>
-                        </View>
+                        ) : (
+                            /* En nativo: dos botones separados */
+                            <View style={styles.modalButtonsRow}>
+                                <TouchableOpacity
+                                    style={[styles.modalOptionBtnHalf, { backgroundColor: theme.inputBackground }]}
+                                    onPress={handleTakeNewPhoto}
+                                    activeOpacity={0.8}
+                                >
+                                    <Ionicons name="camera-outline" size={20} color={theme.primary} style={{ marginRight: 8 }} />
+                                    <Text style={[styles.modalOptionTextSmall, { color: theme.text }]}>Cámara</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.modalOptionBtnHalf, { backgroundColor: theme.inputBackground }]}
+                                    onPress={handleSelectFromGallery}
+                                    activeOpacity={0.8}
+                                >
+                                    <Ionicons name="image-outline" size={20} color={theme.primary} style={{ marginRight: 8 }} />
+                                    <Text style={[styles.modalOptionTextSmall, { color: theme.text }]}>Galería</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
 
                         <TouchableOpacity
                             style={[styles.modalCloseBtn, { backgroundColor: theme.border }]}
@@ -477,6 +491,15 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    modalOptionBtnFull: {
+        flexDirection: 'row',
+        width: '100%',
+        height: 48,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 18,
     },
     modalOptionTextSmall: {
         fontSize: 14,
